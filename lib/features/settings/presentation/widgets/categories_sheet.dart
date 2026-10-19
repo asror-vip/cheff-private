@@ -1,0 +1,122 @@
+import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../providers/settings_provider.dart';
+
+class CategoriesSheet extends StatelessWidget {
+  const CategoriesSheet({super.key});
+
+  static Future<void> show(BuildContext context) {
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => const CategoriesSheet(),
+    );
+  }
+
+  void _showAddDialog(BuildContext context) {
+    final controller = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          backgroundColor: AppColors.surface,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Text(
+            'settings.add_category'.tr(),
+            style: const TextStyle(color: AppColors.textPrimary, fontSize: 16),
+          ),
+          content: TextField(
+            controller: controller,
+            style: const TextStyle(color: AppColors.textPrimary),
+            decoration: InputDecoration(
+              hintText: 'settings.category_name'.tr(),
+              hintStyle: const TextStyle(color: AppColors.textSecondary),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: Colors.white10),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: Colors.blueAccent),
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text('common.cancel'.tr(), style: const TextStyle(color: AppColors.textSecondary)),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final success = SettingsProvider().addCategory(controller.text);
+                if (success) {
+                  Navigator.pop(ctx);
+                } else {
+                  Navigator.pop(ctx);
+                }
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.blueAccent),
+              child: Text('common.save'.tr(), style: const TextStyle(color: Colors.white)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: SettingsProvider(),
+      builder: (context, _) {
+        final categories = SettingsProvider().categories;
+
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'settings.categories'.tr(),
+                      style: const TextStyle(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.add, color: Colors.blueAccent),
+                      tooltip: 'settings.add_category'.tr(),
+                      onPressed: () => _showAddDialog(context),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: categories.map((cat) {
+                    return Chip(
+                      label: Text(cat),
+                      backgroundColor: AppColors.surfaceLight,
+                      labelStyle: const TextStyle(color: AppColors.textPrimary, fontSize: 12),
+                      side: const BorderSide(color: Colors.white10),
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 20),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}

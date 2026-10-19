@@ -1,0 +1,376 @@
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+enum AppRole {
+  owner,
+  staff,
+}
+
+enum Department {
+  none,
+  warehouse,
+  pos,
+  purchases,
+  kitchen,
+  finance,
+}
+
+class EmployeeProfile {
+  final String id;
+  final String name;
+  final Department assignedDepartment;
+  final String status;
+  final String roleName;
+
+  const EmployeeProfile({
+    required this.id,
+    required this.name,
+    required this.assignedDepartment,
+    required this.status,
+    required this.roleName,
+  });
+
+  EmployeeProfile copyWith({
+    String? id,
+    String? name,
+    Department? assignedDepartment,
+    String? status,
+    String? roleName,
+  }) {
+    return EmployeeProfile(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      assignedDepartment: assignedDepartment ?? this.assignedDepartment,
+      status: status ?? this.status,
+      roleName: roleName ?? this.roleName,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'assignedDepartment': assignedDepartment.name,
+    'status': status,
+    'roleName': roleName,
+  };
+
+  factory EmployeeProfile.fromJson(Map<String, dynamic> json) => EmployeeProfile(
+    id: json['id'] ?? '',
+    name: json['name'] ?? '',
+    assignedDepartment: Department.values.firstWhere(
+      (d) => d.name == json['assignedDepartment'],
+      orElse: () => Department.none,
+    ),
+    status: json['status'] ?? 'waiting',
+    roleName: json['roleName'] ?? 'Xodim',
+  );
+}
+
+class BossProfile {
+  final String id;
+  final String name;
+  final String roleTitle;
+  final String restaurantName;
+  final String restaurantId;
+
+  const BossProfile({
+    required this.id,
+    required this.name,
+    required this.roleTitle,
+    required this.restaurantName,
+    required this.restaurantId,
+  });
+}
+
+class SessionManager extends ChangeNotifier {
+  static final SessionManager _instance = SessionManager._internal();
+  factory SessionManager() => _instance;
+  SessionManager._internal() {
+    init();
+  }
+
+  bool _isLoggedIn = false;
+  bool get isLoggedIn {
+    try {
+      final supabaseUser = Supabase.instance.client.auth.currentUser;
+      if (supabaseUser != null) return true;
+    } catch (_) {}
+    return _isLoggedIn;
+  }
+
+  AppRole _currentRole = AppRole.owner;
+  AppRole get currentRole => _currentRole;
+
+  BossProfile _bossProfile = const BossProfile(
+    id: '11111111-1111-1111-1111-111111111111',
+    name: 'Alisher Usmonov',
+    roleTitle: 'Restoran Rahbari (Boshliq)',
+    restaurantName: 'Rayhon Milliy Taomlar',
+    restaurantId: '00000000-0000-0000-0000-000000000000',
+  );
+  BossProfile get bossProfile => _bossProfile;
+
+  final List<EmployeeProfile> _employees = [
+    const EmployeeProfile(
+      id: 'EMP-101',
+      name: 'Bobur Aliyev',
+      assignedDepartment: Department.warehouse,
+      status: 'active',
+      roleName: 'Ombor mudiri',
+    ),
+    const EmployeeProfile(
+      id: 'EMP-102',
+      name: 'Malika Karimova',
+      assignedDepartment: Department.pos,
+      status: 'active',
+      roleName: 'Kassir',
+    ),
+    const EmployeeProfile(
+      id: 'EMP-103',
+      name: 'Jasur Shodiyev',
+      assignedDepartment: Department.none,
+      status: 'waiting',
+      roleName: 'Yangi xodim (Kutilmoqda)',
+    ),
+  ];
+  List<EmployeeProfile> get employees => List.unmodifiable(_employees);
+
+  EmployeeProfile? _currentEmployee;
+  EmployeeProfile? get currentEmployee => _currentEmployee;
+
+  Department get activeDepartment {
+    if (_currentRole == AppRole.owner) {
+      return Department.none;
+    }
+    return _currentEmployee?.assignedDepartment ?? Department.none;
+  }
+
+  bool isDepartmentDelegated(Department dept) {
+    if (dept == Department.none) return false;
+    return _employees.any(
+      (emp) => emp.assignedDepartment == dept && emp.status == 'active',
+    );
+  }
+
+  EmployeeProfile? getEmployeeForDepartment(Department dept) {
+    try {
+      return _employees.firstWhere(
+        (emp) => emp.assignedDepartment == dept && emp.status == 'active',
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> init() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final employeesJson = prefs.getString('chefcontrol_employees');
+      if (employeesJson != null) {
+        final List<dynamic> list = jsonDecode(employeesJson);
+        final loaded = list.map((e) => EmployeeProfile.fromJson(e)).toList();
+        if (loaded.isNotEmpty) {
+          _employees.clear();
+          _employees.addAll(loaded);
+        }
+      }
+
+      final bossName = prefs.getString('chefcontrol_boss_name');
+      final restName = prefs.getString('chefcontrol_rest_name');
+      final restId = prefs.getString('chefcontrol_rest_id');
+      if (bossName != null || restName != null || restId != null) {
+        _bossProfile = BossProfile(
+          id: _bossProfile.id,
+          name: bossName ?? _bossProfile.name,
+          roleTitle: _bossProfile.roleTitle,
+          restaurantName: restName ?? _bossProfile.restaurantName,
+          restaurantId: restId ?? _bossProfile.restaurantId,
+        );
+      }
+      final isLoggedInPref = prefs.getBool('chefcontrol_is_logged_in');
+      if (isLoggedInPref != null) {
+        _isLoggedIn = isLoggedInPref;
+      }
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error initializing session: $e');
+    }
+  }
+
+  Future<void> _saveEmployees() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final data = jsonEncode(_employees.map((e) => e.toJson()).toList());
+      await prefs.setString('chefcontrol_employees', data);
+    } catch (e) {
+      debugPrint('Error saving employees: $e');
+    }
+  }
+
+  Future<void> _saveBoss() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('chefcontrol_boss_name', _bossProfile.name);
+      await prefs.setString('chefcontrol_rest_name', _bossProfile.restaurantName);
+      await prefs.setString('chefcontrol_rest_id', _bossProfile.restaurantId);
+    } catch (e) {
+      debugPrint('Error saving boss: $e');
+    }
+  }
+
+  void _syncEmployeeToSupabase(EmployeeProfile emp) {
+    try {
+      final client = Supabase.instance.client;
+      client.from('users').upsert({
+        'id': emp.id,
+        'restaurant_id': _bossProfile.restaurantId,
+        'name': emp.name,
+        'role': emp.roleName,
+        'department': emp.assignedDepartment.name,
+        'status': emp.status,
+      }).catchError((e) {
+        debugPrint('Supabase employee sync error: $e');
+      });
+    } catch (_) {}
+  }
+
+  void _syncRestaurantToSupabase() {
+    try {
+      final client = Supabase.instance.client;
+      client.from('restaurants').update({
+        'name': _bossProfile.restaurantName,
+      }).eq('id', _bossProfile.restaurantId).catchError((e) {
+        debugPrint('Supabase restaurant sync error: $e');
+      });
+    } catch (_) {}
+  }
+
+  void switchToBoss() {
+    _isLoggedIn = true;
+    _currentRole = AppRole.owner;
+    _currentEmployee = null;
+    _saveLoginState(true);
+    notifyListeners();
+  }
+
+  void switchToEmployee(String employeeId) {
+    _isLoggedIn = true;
+    _saveLoginState(true);
+    final emp = _employees.firstWhere(
+      (e) => e.id.toLowerCase() == employeeId.toLowerCase(),
+      orElse: () => EmployeeProfile(
+        id: employeeId.toUpperCase(),
+        name: 'Xodim $employeeId',
+        assignedDepartment: Department.none,
+        status: 'waiting',
+        roleName: 'Biriktirilmagan',
+      ),
+    );
+    if (!_employees.any((e) => e.id == emp.id)) {
+      _employees.add(emp);
+      _saveEmployees();
+    }
+    _currentRole = AppRole.staff;
+    _currentEmployee = emp;
+    notifyListeners();
+  }
+
+  Future<void> logout() async {
+    try {
+      await Supabase.instance.client.auth.signOut();
+    } catch (_) {}
+    _isLoggedIn = false;
+    _currentEmployee = null;
+    _currentRole = AppRole.owner;
+    await _saveLoginState(false);
+    notifyListeners();
+  }
+
+  Future<void> _saveLoginState(bool val) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('chefcontrol_is_logged_in', val);
+    } catch (_) {}
+  }
+
+  void assignDepartment(String employeeId, Department department) {
+    final index = _employees.indexWhere((e) => e.id == employeeId);
+    if (index != -1) {
+      String roleName = 'Biriktirilmagan';
+      switch (department) {
+        case Department.warehouse:
+          roleName = 'Ombor mudiri';
+          break;
+        case Department.pos:
+          roleName = 'Kassir (POS)';
+          break;
+        case Department.purchases:
+          roleName = 'Ta`minotchi (Xaridlar)';
+          break;
+        case Department.kitchen:
+          roleName = 'Oshpaz';
+          break;
+        case Department.finance:
+          roleName = 'Hisobchi';
+          break;
+        case Department.none:
+          roleName = 'Biriktirilmagan';
+          break;
+      }
+
+      final updated = _employees[index].copyWith(
+        assignedDepartment: department,
+        status: department == Department.none ? 'waiting' : 'active',
+        roleName: roleName,
+      );
+      _employees[index] = updated;
+
+      if (_currentEmployee?.id == employeeId) {
+        _currentEmployee = updated;
+      }
+      _saveEmployees();
+      _syncEmployeeToSupabase(updated);
+      notifyListeners();
+    }
+  }
+
+  EmployeeProfile registerNewEmployee({required String name}) {
+    final nextIdNum = 100 + _employees.length + 1;
+    final newId = 'EMP-$nextIdNum';
+    final newEmp = EmployeeProfile(
+      id: newId,
+      name: name,
+      assignedDepartment: Department.none,
+      status: 'waiting',
+      roleName: 'Yangi xodim',
+    );
+    _employees.add(newEmp);
+    _saveEmployees();
+    _syncEmployeeToSupabase(newEmp);
+    notifyListeners();
+    return newEmp;
+  }
+
+  void updateBossProfile({
+    String? name,
+    String? restaurantName,
+    String? restaurantId,
+  }) {
+    _bossProfile = BossProfile(
+      id: _bossProfile.id,
+      name: name ?? _bossProfile.name,
+      roleTitle: _bossProfile.roleTitle,
+      restaurantName: restaurantName ?? _bossProfile.restaurantName,
+      restaurantId: restaurantId ?? _bossProfile.restaurantId,
+    );
+    _saveBoss();
+    _syncRestaurantToSupabase();
+    notifyListeners();
+  }
+
+  String getInviteLink(String employeeId) {
+    return 'https://chefcontrol.ai/join?code=$employeeId&rest=${_bossProfile.restaurantId}';
+  }
+}
