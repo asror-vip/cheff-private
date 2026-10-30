@@ -20,8 +20,7 @@ class CashierShiftsRepository {
       }
       return null;
     } catch (e) {
-      // Baza hali bo'lmasa fallback (lokal mock state)
-      return null; 
+      throw Exception('Smenani olishda xatolik: $e');
     }
   }
 
@@ -37,7 +36,7 @@ class CashierShiftsRepository {
         'initial_cash': shift.initialCash,
       });
     } catch (e) {
-      // Fallback
+      throw Exception('Smenani ochishda xatolik: $e');
     }
   }
 
@@ -53,7 +52,7 @@ class CashierShiftsRepository {
         'note': shift.note,
       }).eq('id', shift.id);
     } catch (e) {
-      // Fallback
+      throw Exception('Smenani yopishda xatolik: $e');
     }
   }
 

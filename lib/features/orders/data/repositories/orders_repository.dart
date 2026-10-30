@@ -39,7 +39,7 @@ class OrdersRepository {
     try {
       await _client.from('orders').insert(payload);
     } catch (e) {
-      // Fallback
+      throw Exception('Buyurtma yaratishda xatolik: $e');
     }
   }
 
@@ -66,7 +66,7 @@ class OrdersRepository {
       });
       return result as String; 
     } catch (e) {
-       return 'mock_success';
+       throw Exception('Buyurtmani yuborishda xatolik: $e');
     }
   }
 
@@ -78,7 +78,7 @@ class OrdersRepository {
       }
       await _client.from('order_items').update(updateData).eq('id', itemId);
     } catch (e) {
-      // Fallback
+      throw Exception('Holatni yangilashda xatolik: $e');
     }
   }
 
