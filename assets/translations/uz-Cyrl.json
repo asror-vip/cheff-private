@@ -447,5 +447,19 @@
     "confirm": "Тасдиқлаш",
     "no_data": "Маълумот йўқ",
     "currency_sum": "сўм"
+  },
+  "kitchen": {
+    "title": "Ошхона экрани",
+    "pending": "Янги",
+    "cooking": "Пиширилмоқда",
+    "ready": "Тайёр",
+    "start_cooking": "Бошлаш",
+    "mark_ready": "Тайёр",
+    "finish": "Олиб кетилди",
+    "empty": "Буюртмалар йўқ",
+    "table": "Стол: {}",
+    "order": "Буюртма",
+    "items": "Таомлар",
+    "time_elapsed": "Вақт: {}"
   }
 }

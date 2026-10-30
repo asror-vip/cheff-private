@@ -1,3 +1,4 @@
+import 'package:chefcontrol/core/utils/toast_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -54,12 +55,7 @@ class _ProfileEditSheetState extends State<ProfileEditSheet> {
 
     if (success) {
       Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('settings.save_success'.tr()),
-          backgroundColor: Colors.green,
-        ),
-      );
+      ToastUtils.showSuccess(context, 'settings.save_success'.tr());
     }
   }
 

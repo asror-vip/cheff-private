@@ -1,3 +1,4 @@
+import 'package:chefcontrol/core/utils/toast_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -56,12 +57,7 @@ class TelegramChatBubble extends StatelessWidget {
             onLongPress: () {
               Clipboard.setData(ClipboardData(text: message.text));
               HapticFeedback.lightImpact();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('staff.link_copied'.tr()),
-                  duration: const Duration(seconds: 1),
-                ),
-              );
+              ToastUtils.showSuccess(context, 'Nusxa olindi');
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),

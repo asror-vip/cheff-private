@@ -6,6 +6,7 @@ import '../../domain/entities/recipe_entity.dart';
 import '../providers/recipes_provider.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../domain/entities/ingredient_option.dart';
+import '../../../../core/utils/toast_utils.dart';
 
 class RecipeDetailPage extends StatefulWidget {
   final RecipeEntity recipe;
@@ -361,12 +362,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> with SingleTickerPr
               );
               if (mounted) {
                 setState(() => _isSavingTech = false);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('common.success'.tr()),
-                    backgroundColor: AppColors.success,
-                  ),
-                );
+                ToastUtils.showSuccess(context, 'common.success'.tr());
               }
             },
             child: _isSavingTech
@@ -680,35 +676,17 @@ class _AddIngredientModalState extends State<AddIngredientModal> {
                               
                               if (context.mounted) {
                                 Navigator.pop(context);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('recipes.ingredient_added_success'.tr()),
-                                    backgroundColor: AppColors.success,
-                                    behavior: SnackBarBehavior.floating,
-                                  )
-                                );
+                                ToastUtils.showSuccess(context, 'recipes.ingredient_added_success'.tr());
                               }
                             } catch (e) {
                               if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('${'recipes.error_occurred'.tr()}: $e'),
-                                    backgroundColor: Colors.redAccent,
-                                    behavior: SnackBarBehavior.floating,
-                                  )
-                                );
+                                ToastUtils.showError(context, '${'recipes.error_occurred'.tr()}: $e');
                               }
                             } finally {
                               if (mounted) setState(() => _isSaving = false);
                             }
                           } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('recipes.enter_valid_amount'.tr()),
-                                backgroundColor: Colors.orange,
-                                behavior: SnackBarBehavior.floating,
-                              )
-                            );
+                            ToastUtils.showError(context, 'recipes.enter_valid_amount'.tr());
                           }
                         },
                         style: ElevatedButton.styleFrom(

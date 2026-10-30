@@ -447,5 +447,19 @@
     "confirm": "Confirm",
     "no_data": "No data",
     "currency_sum": "sum"
+  },
+  "kitchen": {
+    "title": "Kitchen Display",
+    "pending": "New",
+    "cooking": "Cooking",
+    "ready": "Ready",
+    "start_cooking": "Start",
+    "mark_ready": "Ready",
+    "finish": "Picked up",
+    "empty": "No orders",
+    "table": "Table: {}",
+    "order": "Order",
+    "items": "Items",
+    "time_elapsed": "Time: {}"
   }
 }

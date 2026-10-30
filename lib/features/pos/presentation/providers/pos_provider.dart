@@ -77,7 +77,7 @@ class PosProvider with ChangeNotifier {
     return total;
   }
 
-  Future<bool> checkout() async {
+  Future<bool> checkout(Map<String, double> payments, {String orderName = 'Yangi Chek'}) async {
     if (_cart.isEmpty) return false;
 
     _isLoading = true;
@@ -87,13 +87,16 @@ class PosProvider with ChangeNotifier {
     try {
       final items = _cart.values.toList();
       final currentTotal = totalAmount;
-      await _repository.checkout(items, currentTotal);
+      await _repository.checkout(items, currentTotal, payments);
 
       final summary = items.map((i) => '${i['name']} x${i['quantity']}').join(', ');
+      
+      String paymentDetails = payments.entries.map((e) => '${e.key}: ${e.value}').join(', ');
+
       AuditService().logAction(
         department: 'pos',
         action: 'POS Savdo cheki',
-        details: 'Chek yopildi. Jami: ${currentTotal.toStringAsFixed(0)} so`m ($summary).',
+        details: 'Chek yopildi. Jami: ${currentTotal.toStringAsFixed(0)} so`m ($summary). To\'lov: $paymentDetails',
       );
 
       clearCart();

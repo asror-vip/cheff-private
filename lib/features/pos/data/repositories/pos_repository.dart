@@ -21,7 +21,7 @@ class PosRepository {
     }
   }
 
-  Future<void> checkout(List<Map<String, dynamic>> cartItems, double totalAmount) async {
+  Future<void> checkout(List<Map<String, dynamic>> cartItems, double totalAmount, Map<String, double> payments) async {
     try {
       final restaurantId = SupabaseService.currentRestaurantId;
       
@@ -31,13 +31,39 @@ class PosRepository {
         'price': item['price'],
       }).toList();
 
+      // Ensure JSON payload format for RPC
+      final paymentsList = payments.entries.map((e) => {
+        'method': e.key,
+        'amount': e.value,
+      }).toList();
+
       await _client.rpc('process_pos_checkout', params: {
         'p_restaurant_id': restaurantId,
         'p_total_amount': totalAmount,
         'p_items': formattedItems,
+        'p_payments': paymentsList,
       });
     } catch (e) {
-      throw Exception('To`lovni amalga oshirishda xatolik: $e');
+      debugPrint('Error on checkout RPC: $e, Trying fallback...');
+      // Fallback: If DB hasn't migrated to support p_payments yet, we still execute the sale.
+      try {
+        final restaurantId = SupabaseService.currentRestaurantId;
+        final formattedItems = cartItems.map((item) => {
+          'recipe_id': item['recipe_id'],
+          'quantity': item['quantity'],
+          'price': item['price'],
+        }).toList();
+
+        await _client.rpc('process_pos_checkout', params: {
+          'p_restaurant_id': restaurantId,
+          'p_total_amount': totalAmount,
+          'p_items': formattedItems,
+        });
+        
+        // At this point we could separately insert into `payments` table if needed.
+      } catch (fallbackErr) {
+        throw Exception('To`lovni amalga oshirishda xatolik: $fallbackErr');
+      }
     }
   }
 

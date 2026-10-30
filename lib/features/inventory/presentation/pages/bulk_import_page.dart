@@ -1,3 +1,4 @@
+import 'package:chefcontrol/core/utils/toast_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
@@ -171,9 +172,7 @@ class _BulkImportPageState extends State<BulkImportPage> {
     } catch (e) {
       setState(() => _isLoading = false);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${'common.error'.tr()}: $e')),
-        );
+        ToastUtils.showError(context, '${'common.error'.tr()}: $e');
       }
     }
   }
@@ -214,9 +213,7 @@ class _BulkImportPageState extends State<BulkImportPage> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${'common.error'.tr()}: $e')),
-        );
+        ToastUtils.showError(context, '${'common.error'.tr()}: $e');
       }
     } finally {
       setState(() => _isLoading = false);

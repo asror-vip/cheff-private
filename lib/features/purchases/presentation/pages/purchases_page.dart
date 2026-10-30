@@ -8,6 +8,7 @@ import '../providers/purchases_provider.dart';
 import 'package:provider/provider.dart';
 import '../../data/services/ai_scanner_service.dart';
 import 'create_request_page.dart';
+import '../../../../core/utils/toast_utils.dart';
 
 class PurchasesPage extends StatefulWidget {
   const PurchasesPage({super.key});
@@ -87,9 +88,7 @@ class _PurchasesPageState extends State<PurchasesPage> with SingleTickerProvider
       if (mounted) Navigator.pop(context);
       
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${"purchases.error".tr()}: $e'), backgroundColor: AppColors.error, duration: const Duration(seconds: 10)),
-      );
+      ToastUtils.showError(context, '${"purchases.error".tr()}: $e');
     }
   }
 
@@ -313,15 +312,11 @@ class _PurchasesPageState extends State<PurchasesPage> with SingleTickerProvider
                               await context.read<PurchasesProvider>().saveAIPurchase(items, imageFile: file, existingPurchaseId: existingPurchaseId);
                               if (!mounted) return;
                               Navigator.pop(context);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('purchases.saved_successfully'.tr()), backgroundColor: AppColors.success),
-                              );
+                              ToastUtils.showError(context, 'purchases.saved_successfully'.tr());
                             } catch (e) {
                               if (!mounted) return;
                               Navigator.pop(context);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('${"purchases.save_error".tr()}: $e'), backgroundColor: AppColors.error),
-                              );
+                              ToastUtils.showError(context, '${"purchases.save_error".tr()}: $e');
                             }
                           },
                           style: ElevatedButton.styleFrom(

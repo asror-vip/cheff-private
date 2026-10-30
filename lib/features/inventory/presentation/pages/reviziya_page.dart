@@ -1,3 +1,4 @@
+import 'package:chefcontrol/core/utils/toast_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
@@ -128,13 +129,9 @@ class _ReviziyaPageState extends State<ReviziyaPage> {
                         if (!context.mounted) return;
                         if (success) {
                           Navigator.pop(context);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('inventory.reviziya_success'.tr()), backgroundColor: Colors.green),
-                          );
+                          ToastUtils.showSuccess(context, 'inventory.reviziya_success'.tr());
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(provider.error ?? 'common.error'.tr()), backgroundColor: Colors.red),
-                          );
+                          ToastUtils.showError(context, provider.error ?? 'common.error'.tr());
                         }
                       },
                 child: provider.isLoading

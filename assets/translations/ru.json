@@ -447,5 +447,19 @@
     "confirm": "Подтвердить",
     "no_data": "Нет данных",
     "currency_sum": "сум"
+  },
+  "kitchen": {
+    "title": "Экран кухни (KDS)",
+    "pending": "Новые",
+    "cooking": "Готовятся",
+    "ready": "Готовы",
+    "start_cooking": "Начать",
+    "mark_ready": "Готово",
+    "finish": "Забрали",
+    "empty": "Нет заказов",
+    "table": "Стол: {}",
+    "order": "Заказ",
+    "items": "Блюда",
+    "time_elapsed": "Время: {}"
   }
 }

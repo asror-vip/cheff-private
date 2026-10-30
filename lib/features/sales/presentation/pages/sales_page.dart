@@ -1,3 +1,4 @@
+import 'package:chefcontrol/core/utils/toast_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:excel/excel.dart' hide Border;
@@ -70,7 +71,7 @@ class _SalesPageState extends State<SalesPage> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Xato: $e')));
+        ToastUtils.showError(context, 'Xato: $e');
       }
     }
   }

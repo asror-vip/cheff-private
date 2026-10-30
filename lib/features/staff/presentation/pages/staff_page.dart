@@ -1,3 +1,4 @@
+import 'package:chefcontrol/core/utils/toast_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -875,13 +876,7 @@ class _StaffPageState extends State<StaffPage> with SingleTickerProviderStateMix
                         icon: const Icon(Icons.copy, size: 18, color: Colors.white70),
                         onPressed: () {
                           Clipboard.setData(ClipboardData(text: inviteLink));
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('staff.link_copied'.tr()),
-                              backgroundColor: Colors.green,
-                              duration: const Duration(seconds: 2),
-                            ),
-                          );
+                          ToastUtils.showSuccess(context, 'staff.link_copied'.tr());
                         },
                       ),
                     ],
@@ -896,13 +891,7 @@ class _StaffPageState extends State<StaffPage> with SingleTickerProviderStateMix
                     onPressed: () {
                       Clipboard.setData(ClipboardData(text: inviteLink));
                       Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('staff.link_copied'.tr()),
-                          backgroundColor: Colors.green,
-                          duration: const Duration(seconds: 2),
-                        ),
-                      );
+                      ToastUtils.showSuccess(context, 'staff.link_copied'.tr());
                     },
                     icon: const Icon(Icons.copy, size: 18),
                     label: Text('staff.copy_link'.tr()),

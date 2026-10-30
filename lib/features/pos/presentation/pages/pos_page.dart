@@ -5,6 +5,13 @@ import '../../../../core/theme/app_colors.dart';
 import '../providers/pos_provider.dart';
 import '../../../../features/tables/presentation/pages/tables_page.dart';
 import '../../../../features/tables/domain/entities/table_entity.dart';
+import '../../../orders/presentation/providers/orders_provider.dart';
+import '../../../orders/presentation/pages/waiter_order_page.dart';
+import '../../../../core/utils/toast_utils.dart';
+import '../widgets/payment_dialog.dart';
+import '../../../../features/tables/presentation/providers/tables_provider.dart';
+import '../../../cashier_shifts/presentation/providers/cashier_shifts_provider.dart';
+import '../../../cashier_shifts/presentation/pages/shift_page.dart';
 
 class PosPage extends StatefulWidget {
   const PosPage({super.key});
@@ -33,35 +40,83 @@ class _PosPageState extends State<PosPage> {
       setState(() {
         _selectedTable = table;
       });
-      // In a real app, here you would load the cart/order associated with table.currentOrderId
+      if (context.mounted) {
+        context.read<OrdersProvider>().openOrderForTable(table, context.read<TablesProvider>());
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const WaiterOrderPage()),
+        );
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: Text(
-          _selectedTable == null ? 'pos.title'.tr() : '${'pos.title'.tr()} - ${_selectedTable!.name}', 
-          style: const TextStyle(fontWeight: FontWeight.bold)
-        ),
-        backgroundColor: AppColors.surface,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.table_restaurant),
-            tooltip: 'Stollar',
-            onPressed: _openTables,
+    return Consumer<CashierShiftsProvider>(
+      builder: (context, shiftProvider, child) {
+        if (!shiftProvider.isLoading && shiftProvider.activeShift == null) {
+          // Kassir smenasi ochiq emas! Faqatgina smenani ochishni so'raymiz
+          return Scaffold(
+            backgroundColor: AppColors.background,
+            appBar: AppBar(
+              title: const Text('Kassa yopiq', style: TextStyle(color: AppColors.textPrimary)),
+              backgroundColor: AppColors.surface,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.lock, size: 80, color: Colors.orange),
+                  const SizedBox(height: 16),
+                  const Text('Smena ochilmagan!', style: TextStyle(color: AppColors.textPrimary, fontSize: 24, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  const Text('Savdoni boshlash uchun smenani oching', style: TextStyle(color: AppColors.textSecondary, fontSize: 16)),
+                  const SizedBox(height: 24),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const ShiftPage()));
+                    },
+                    icon: const Icon(Icons.lock_open),
+                    label: const Text('Smenani ochish'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        return Scaffold(
+          backgroundColor: AppColors.background,
+          appBar: AppBar(
+            title: Text(
+              _selectedTable == null ? 'pos.title'.tr() : '${'pos.title'.tr()} - ${_selectedTable!.name}', 
+              style: const TextStyle(fontWeight: FontWeight.bold)
+            ),
+            backgroundColor: AppColors.surface,
+            elevation: 0,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.table_restaurant),
+                tooltip: 'Stollar',
+                onPressed: _openTables,
+              ),
+              IconButton(
+                icon: const Icon(Icons.refresh),
+                onPressed: () {
+                  context.read<PosProvider>().fetchRecipes(background: true);
+                },
+              ),
+            ],
           ),
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () {
-              context.read<PosProvider>().fetchRecipes(background: true);
-            },
-          ),
-        ],
-      ),
       body: Column(
         children: [
           // Top: Menu Grid
@@ -207,12 +262,26 @@ class _PosPageState extends State<PosPage> {
                                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                                       ),
                                       onPressed: provider.cart.isEmpty ? null : () {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          const SnackBar(content: Text('Aralash to\'lov / Chekni bo\'lish oynasi ochiladi')),
+                                        showDialog(
+                                          context: context,
+                                          builder: (ctx) => PaymentDialog(
+                                            totalAmount: provider.totalAmount,
+                                            onConfirm: (payments) async {
+                                              Navigator.pop(ctx);
+                                              // KDS bilan ishlash keyingi bosqichda ko'rib chiqiladi. Hozircha oddiy checkout.
+                                              final success = await provider.checkout(payments);
+                                              if (!context.mounted) return;
+                                              if (success) {
+                                                ToastUtils.showSuccess(context, 'pos.payment_success'.tr());
+                                              } else {
+                                                ToastUtils.showError(context, provider.error ?? 'common.error'.tr());
+                                              }
+                                            },
+                                          ),
                                         );
                                       },
                                       icon: const Icon(Icons.splitscreen),
-                                      label: const Text("Bo'lish"),
+                                      label: const Text("Aralash/Bo'lish"),
                                     ),
                                   ),
                                 ),
@@ -230,16 +299,13 @@ class _PosPageState extends State<PosPage> {
                                       onPressed: provider.cart.isEmpty || provider.isLoading
                                           ? null
                                           : () async {
-                                              final success = await provider.checkout();
+                                              final payments = {'cash': provider.totalAmount};
+                                              final success = await provider.checkout(payments);
                                               if (!context.mounted) return;
                                               if (success) {
-                                                ScaffoldMessenger.of(context).showSnackBar(
-                                                  SnackBar(content: Text('pos.payment_success'.tr()), backgroundColor: Colors.green),
-                                                );
+                                                ToastUtils.showSuccess(context, 'pos.payment_success'.tr());
                                               } else {
-                                                ScaffoldMessenger.of(context).showSnackBar(
-                                                  SnackBar(content: Text(provider.error ?? 'common.error'.tr()), backgroundColor: Colors.red),
-                                                );
+                                                ToastUtils.showError(context, provider.error ?? 'common.error'.tr());
                                               }
                                             },
                                       child: provider.isLoading
@@ -261,6 +327,8 @@ class _PosPageState extends State<PosPage> {
           ),
         ],
       ),
+    );
+      },
     );
   }
 }

@@ -15,6 +15,9 @@ import '../../../ai_assistant/presentation/pages/ai_assistant_page.dart';
 import '../../../reports/presentation/pages/reports_page.dart';
 import '../../../settings/presentation/pages/settings_page.dart';
 import '../../../production/presentation/pages/production_page.dart';
+import '../../../cashier_shifts/presentation/pages/shift_page.dart';
+import '../../../tables/presentation/pages/tables_page.dart';
+import '../../../kitchen/presentation/pages/kitchen_page.dart';
 
 class _MenuItemConfig {
   final String title;
@@ -111,6 +114,27 @@ class HomePage extends StatelessWidget {
         iconColor: Colors.deepOrange,
         department: Department.kitchen,
         page: const ProductionPage(),
+      ),
+      _MenuItemConfig(
+        title: 'Kassa Smenasi',
+        icon: Icons.lock_clock,
+        iconColor: Colors.teal,
+        department: Department.pos,
+        page: const ShiftPage(),
+      ),
+      _MenuItemConfig(
+        title: 'Stollar',
+        icon: Icons.table_restaurant,
+        iconColor: Colors.brown,
+        department: Department.pos,
+        page: const TablesPage(),
+      ),
+      _MenuItemConfig(
+        title: 'kitchen.title'.tr(context: context),
+        icon: Icons.kitchen,
+        iconColor: Colors.redAccent,
+        department: Department.kitchen,
+        page: const KitchenPage(),
       ),
       _MenuItemConfig(
         title: 'dashboard.menu_settings'.tr(context: context),

@@ -8,6 +8,7 @@ import '../../domain/entities/order.dart';
 import '../providers/purchases_provider.dart';
 import '../../../inventory/presentation/providers/inventory_provider.dart';
 import '../../../../core/utils/search_utils.dart';
+import '../../../../core/utils/toast_utils.dart';
 
 class CreateRequestPage extends StatefulWidget {
   final PurchaseOrder? initialOrder;
@@ -84,12 +85,7 @@ class _CreateRequestPageState extends State<CreateRequestPage> {
       await _openTelegram(supplier['phone'] ?? '');
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${'purchases.save_error'.tr()}: $e'), 
-            backgroundColor: AppColors.error
-          ),
-        );
+        ToastUtils.showError(context, '${'purchases.save_error'.tr()}: $e');
       }
     }
   }
@@ -143,12 +139,7 @@ class _CreateRequestPageState extends State<CreateRequestPage> {
         if (mounted) Navigator.pop(context);
       } catch (e2) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('purchases.cant_send_telegram'.tr()), 
-              backgroundColor: AppColors.error
-            ),
-          );
+          ToastUtils.showError(context, 'purchases.cant_send_telegram'.tr());
         }
       }
     }

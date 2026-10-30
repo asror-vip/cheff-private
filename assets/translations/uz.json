@@ -447,5 +447,19 @@
     "confirm": "Tasdiqlash",
     "no_data": "Ma'lumot yo'q",
     "currency_sum": "so'm"
+  },
+  "kitchen": {
+    "title": "Oshxona ekrani",
+    "pending": "Yangi",
+    "cooking": "Pishirilmoqda",
+    "ready": "Tayyor",
+    "start_cooking": "Boshlash",
+    "mark_ready": "Tayyor",
+    "finish": "Olib ketildi",
+    "empty": "Buyurtmalar yo'q",
+    "table": "Stol: {}",
+    "order": "Buyurtma",
+    "items": "Taomlar",
+    "time_elapsed": "Vaqt: {}"
   }
 }

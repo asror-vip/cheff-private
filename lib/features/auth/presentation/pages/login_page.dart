@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/session/session_manager.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/toast_utils.dart';
 import '../../../dashboard/presentation/pages/main_layout.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 
@@ -41,24 +42,12 @@ class _LoginPageState extends State<LoginPage> {
 
   void _showError(String message) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: AppColors.error,
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
+    ToastUtils.showError(context, message);
   }
 
   void _showSuccess(String message) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: AppColors.success,
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
+    ToastUtils.showSuccess(context, message);
   }
 
   void _goToHome() {

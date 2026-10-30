@@ -92,25 +92,23 @@ class TablesPage extends StatelessWidget {
         cardColor = AppColors.error.withValues(alpha: 0.2);
         icon = Icons.restaurant;
         break;
-      case TableStatus.reserved:
+      case TableStatus.billRequested:
         cardColor = AppColors.warning.withValues(alpha: 0.2);
-        icon = Icons.access_time;
+        icon = Icons.receipt_long;
         break;
-      case TableStatus.needsCleaning:
+      case TableStatus.cleaning:
         cardColor = Colors.grey.withValues(alpha: 0.3);
         icon = Icons.cleaning_services;
+        break;
+      case TableStatus.outOfService:
+        cardColor = Colors.redAccent.withValues(alpha: 0.1);
+        icon = Icons.block;
         break;
     }
 
     return InkWell(
       onTap: () {
-        // Handle table click - Open POS with this table attached
-        if (table.status == TableStatus.available) {
-            context.read<TablesProvider>().updateTableStatus(table.id, TableStatus.occupied, orderId: 'temp_${table.id}');
-            Navigator.pop(context, table); // Return table to POS
-        } else if (table.status == TableStatus.occupied) {
-            Navigator.pop(context, table); // Return table to POS
-        }
+        Navigator.pop(context, table);
       },
       borderRadius: BorderRadius.circular(16),
       child: Container(

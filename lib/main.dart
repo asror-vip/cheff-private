@@ -16,6 +16,9 @@ import 'features/production/presentation/providers/production_provider.dart';
 import 'features/pos/presentation/providers/pos_provider.dart';
 import 'features/inventory/presentation/providers/reviziya_provider.dart';
 import 'features/tables/presentation/providers/tables_provider.dart';
+import 'features/orders/presentation/providers/orders_provider.dart';
+import 'features/kitchen/presentation/providers/kitchen_provider.dart';
+import 'features/cashier_shifts/presentation/providers/cashier_shifts_provider.dart';
 
 import 'core/session/session_manager.dart';
 import 'core/audit/audit_service.dart';
@@ -56,6 +59,9 @@ void main() async {
         ChangeNotifierProvider(create: (_) => ProductionProvider()),
         ChangeNotifierProvider(create: (_) => PosProvider()),
         ChangeNotifierProvider(create: (_) => TablesProvider()),
+        ChangeNotifierProvider(create: (_) => OrdersProvider()),
+        ChangeNotifierProvider(create: (_) => KitchenProvider()),
+        ChangeNotifierProvider(create: (_) => CashierShiftsProvider()),
         ChangeNotifierProxyProvider<InventoryProvider, ReviziyaProvider>(
           create: (context) => ReviziyaProvider(context.read<InventoryProvider>()),
           update: (context, inventoryProvider, previous) => previous ?? ReviziyaProvider(inventoryProvider),
