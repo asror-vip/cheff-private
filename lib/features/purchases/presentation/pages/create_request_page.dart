@@ -66,14 +66,14 @@ class _CreateRequestPageState extends State<CreateRequestPage> {
           items: _items,
           onSupplierSelected: (Map<String, dynamic> supplier) async {
             Navigator.pop(sheetContext);
-            await _createRequestAndOpenTelegram(supplier);
+            await _createRequestAndOpenAi(supplier);
           },
         );
       },
     );
   }
 
-  Future<void> _createRequestAndOpenTelegram(Map<String, dynamic> supplier) async {
+  Future<void> _createRequestAndOpenAi(Map<String, dynamic> supplier) async {
     try {
       final provider = context.read<PurchasesProvider>();
       if (widget.initialOrder != null) {
@@ -82,7 +82,7 @@ class _CreateRequestPageState extends State<CreateRequestPage> {
         await provider.createRequest(_items, supplier['id']);
       }
       // After saving, open telegram
-      await _openTelegram(supplier['phone'] ?? '');
+      await _openAi(supplier['phone'] ?? '');
     } catch (e) {
       if (mounted) {
         ToastUtils.showError(context, '${'purchases.save_error'.tr()}: $e');
@@ -90,7 +90,7 @@ class _CreateRequestPageState extends State<CreateRequestPage> {
     }
   }
 
-  Future<void> _openTelegram(String phone) async {
+  Future<void> _openAi(String phone) async {
     final buffer = StringBuffer();
     buffer.writeln("purchases.telegram_msg_title".tr());
     buffer.writeln("purchases.telegram_msg_subtitle".tr());
@@ -511,7 +511,7 @@ class _SupplierSelectionSheetState extends State<_SupplierSelectionSheet> {
                           String title = titleMatch?.group(1) ?? '';
                           String imageUrl = imageMatch?.group(1) ?? '';
                           
-                          if (title.isNotEmpty && !title.contains('Telegram: Contact')) {
+                          if (title.isNotEmpty && !title.contains('Ai: Contact')) {
                             setDialogState(() {
                               searchStatus = 'found';
                               foundName = title;

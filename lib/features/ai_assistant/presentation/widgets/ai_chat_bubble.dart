@@ -7,10 +7,10 @@ import '../../domain/entities/ai_agent_action_entity.dart';
 import '../../../../core/theme/app_colors.dart';
 import 'agent_action_card.dart';
 
-class TelegramChatBubble extends StatelessWidget {
+class AiChatBubble extends StatelessWidget {
   final AiMessageEntity message;
 
-  const TelegramChatBubble({
+  const AiChatBubble({
     super.key,
     required this.message,
   });

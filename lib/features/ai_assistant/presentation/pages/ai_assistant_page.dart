@@ -4,9 +4,9 @@ import 'package:provider/provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/entities/ai_message_entity.dart';
 import '../providers/ai_assistant_provider.dart';
-import '../widgets/telegram_chat_bubble.dart';
-import '../widgets/telegram_voice_bubble.dart';
-import '../widgets/telegram_voice_record_bar.dart';
+import '../widgets/ai_chat_bubble.dart';
+import '../widgets/ai_voice_bubble.dart';
+import '../widgets/ai_voice_record_bar.dart';
 import '../widgets/quick_voice_sheet.dart';
 
 class AiAssistantPage extends StatelessWidget {
@@ -235,7 +235,7 @@ class _AiAssistantViewState extends State<AiAssistantView> {
               },
             ),
           ),
-          TelegramVoiceRecordBar(
+          AiVoiceRecordBar(
             controller: _textController,
             isListening: provider.isListening,
             isLoading: provider.isLoading,
@@ -283,7 +283,7 @@ class _AiAssistantViewState extends State<AiAssistantView> {
 
   Widget _buildMessageItem(AiMessageEntity msg) {
     if (msg.type == AiMessageType.voice) {
-      return TelegramVoiceBubble(
+      return AiVoiceBubble(
         text: msg.text,
         isUser: msg.isUser,
         durationSeconds: msg.voiceDurationSeconds ?? 2,
@@ -291,7 +291,7 @@ class _AiAssistantViewState extends State<AiAssistantView> {
       );
     }
 
-    return TelegramChatBubble(message: msg);
+    return AiChatBubble(message: msg);
   }
 
   Widget _buildTypingIndicator() {

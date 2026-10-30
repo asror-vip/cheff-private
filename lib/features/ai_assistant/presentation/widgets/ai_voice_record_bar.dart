@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/theme/app_colors.dart';
 
-class TelegramVoiceRecordBar extends StatefulWidget {
+class AiVoiceRecordBar extends StatefulWidget {
   final TextEditingController controller;
   final bool isListening;
   final bool isLoading;
@@ -15,7 +15,7 @@ class TelegramVoiceRecordBar extends StatefulWidget {
   final ValueChanged<String> onSendText;
   final VoidCallback onOpenQuickPresets;
 
-  const TelegramVoiceRecordBar({
+  const AiVoiceRecordBar({
     super.key,
     required this.controller,
     required this.isListening,
@@ -29,10 +29,10 @@ class TelegramVoiceRecordBar extends StatefulWidget {
   });
 
   @override
-  State<TelegramVoiceRecordBar> createState() => _TelegramVoiceRecordBarState();
+  State<AiVoiceRecordBar> createState() => _AiVoiceRecordBarState();
 }
 
-class _TelegramVoiceRecordBarState extends State<TelegramVoiceRecordBar>
+class _AiVoiceRecordBarState extends State<AiVoiceRecordBar>
     with SingleTickerProviderStateMixin {
   bool _hasText = false;
   double _dragOffset = 0.0;
@@ -62,7 +62,7 @@ class _TelegramVoiceRecordBarState extends State<TelegramVoiceRecordBar>
   }
 
   @override
-  void didUpdateWidget(covariant TelegramVoiceRecordBar oldWidget) {
+  void didUpdateWidget(covariant AiVoiceRecordBar oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.isListening && !oldWidget.isListening) {
       _recordSeconds = 0;

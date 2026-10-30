@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 
-class TelegramVoiceBubble extends StatefulWidget {
+class AiVoiceBubble extends StatefulWidget {
   final String text;
   final bool isUser;
   final int durationSeconds;
   final DateTime timestamp;
 
-  const TelegramVoiceBubble({
+  const AiVoiceBubble({
     super.key,
     required this.text,
     required this.isUser,
@@ -16,10 +16,10 @@ class TelegramVoiceBubble extends StatefulWidget {
   });
 
   @override
-  State<TelegramVoiceBubble> createState() => _TelegramVoiceBubbleState();
+  State<AiVoiceBubble> createState() => _AiVoiceBubbleState();
 }
 
-class _TelegramVoiceBubbleState extends State<TelegramVoiceBubble> {
+class _AiVoiceBubbleState extends State<AiVoiceBubble> {
   bool _isPlaying = false;
 
   @override
@@ -86,7 +86,7 @@ class _TelegramVoiceBubbleState extends State<TelegramVoiceBubble> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Telegram styled sound waveform
+                      // Ai styled sound waveform
                       Row(
                         children: List.generate(18, (index) {
                           final heights = [
