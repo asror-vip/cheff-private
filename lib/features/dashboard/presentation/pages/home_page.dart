@@ -441,7 +441,7 @@ class HomePage extends StatelessWidget {
                 ),
                 const SizedBox(height: 14),
                 Text(
-                  'staff.waiting_desc'.tr(),
+                  'Siz tizimga muvaffaqiyatli kirdingiz. Hozircha sizga hech qanday bo\'lim biriktirilmagan. Rol va bo\'lim olish uchun menejerga murojaat qiling.',
                   style: const TextStyle(
                     color: AppColors.textPrimary,
                     fontSize: 14,
