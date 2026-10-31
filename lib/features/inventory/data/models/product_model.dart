@@ -14,6 +14,7 @@ class ProductModel {
   final double currentStock;
   final double averageCost;
   final bool isNew;
+  final bool isSemiFinished;
 
   ProductModel({
     required this.id,
@@ -29,6 +30,7 @@ class ProductModel {
     this.currentStock = 0.0,
     this.averageCost = 0.0,
     this.isNew = false,
+    this.isSemiFinished = false,
   });
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
@@ -46,6 +48,7 @@ class ProductModel {
       currentStock: (json['current_stock'] ?? 0).toDouble(), // If we have a view
       averageCost: (json['average_cost'] ?? 0).toDouble(),
       isNew: json['is_new'] ?? false,
+      isSemiFinished: json['is_semi_finished'] ?? false,
     );
   }
 }

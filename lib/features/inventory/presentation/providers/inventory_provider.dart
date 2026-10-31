@@ -61,6 +61,7 @@ class InventoryProvider extends ChangeNotifier {
     required double minimumStock,
     double initialStock = 0,
     double costPrice = 0,
+    bool isSemiFinished = false,
   }) async {
     _isLoading = true;
     _error = null;
@@ -73,6 +74,7 @@ class InventoryProvider extends ChangeNotifier {
         unit: unit,
         minimumStock: minimumStock,
         initialStock: initialStock,
+        isSemiFinished: isSemiFinished,
         costPrice: costPrice,
       );
       

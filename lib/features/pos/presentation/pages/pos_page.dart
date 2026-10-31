@@ -4,7 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/session/session_manager.dart';
 import '../providers/pos_provider.dart';
-import '../data/services/printer_service.dart';
+import '../../data/services/printer_service.dart';
 import '../../../../features/tables/presentation/pages/tables_page.dart';
 import '../../../../features/tables/domain/entities/table_entity.dart';
 import '../../../orders/presentation/providers/orders_provider.dart';

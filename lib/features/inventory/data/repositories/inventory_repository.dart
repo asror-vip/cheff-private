@@ -47,6 +47,7 @@ class InventoryRepository {
     required double minimumStock,
     double initialStock = 0,
     double costPrice = 0,
+    bool isSemiFinished = false,
   }) async {
     final restaurantId = SupabaseService.currentRestaurantId;
 
@@ -60,6 +61,7 @@ class InventoryRepository {
       'unit': unit,
       'minimum_stock': minimumStock,
       'average_cost': costPrice,
+      'is_semi_finished': isSemiFinished,
       'is_active': true,
     }).select().single();
 

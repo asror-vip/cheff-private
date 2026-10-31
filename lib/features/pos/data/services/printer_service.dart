@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
 import 'package:intl/intl.dart';
@@ -53,7 +54,7 @@ class PrinterService {
     final generator = Generator(PaperSize.mm58, profile);
     List<int> bytes = [];
 
-    final currency = 'uzs';
+    // final currency = 'uzs';
     final formatter = NumberFormat.currency(locale: 'uz', symbol: '', decimalDigits: 0);
 
     // Header
@@ -113,6 +114,6 @@ class PrinterService {
     bytes += generator.emptyLines(2);
 
     // Print!
-    _printer.writeBytes(bytes);
+    _printer.writeBytes(Uint8List.fromList(bytes));
   }
 }

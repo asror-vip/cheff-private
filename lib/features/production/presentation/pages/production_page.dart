@@ -67,6 +67,11 @@ class _ProductionPageState extends State<ProductionPage> {
         iconTheme: const IconThemeData(color: AppColors.textPrimary),
         actions: [
           IconButton(
+            icon: const Icon(Icons.inventory_2_outlined, color: Colors.blueAccent),
+            tooltip: 'Zagatovka qilish',
+            onPressed: () => CreateZagatovkaSheet.show(context),
+          ),
+          IconButton(
             icon: const Icon(Icons.search),
             onPressed: () async {
               final selectedId = await showSearch(
