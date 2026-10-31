@@ -74,6 +74,9 @@ class BossProfile {
   final String roleTitle;
   final String restaurantName;
   final String restaurantId;
+  final String address;
+  final String phone;
+  final String inn;
 
   const BossProfile({
     required this.id,
@@ -81,6 +84,9 @@ class BossProfile {
     required this.roleTitle,
     required this.restaurantName,
     required this.restaurantId,
+    this.address = '',
+    this.phone = '',
+    this.inn = '',
   });
 }
 
@@ -180,6 +186,10 @@ class SessionManager extends ChangeNotifier {
       final bossName = prefs.getString('chefcontrol_boss_name');
       final restName = prefs.getString('chefcontrol_rest_name');
       final restId = prefs.getString('chefcontrol_rest_id');
+      final restAddress = prefs.getString('chefcontrol_rest_address');
+      final restPhone = prefs.getString('chefcontrol_rest_phone');
+      final restInn = prefs.getString('chefcontrol_rest_inn');
+      
       if (bossName != null || restName != null || restId != null) {
         _bossProfile = BossProfile(
           id: _bossProfile.id,
@@ -187,6 +197,9 @@ class SessionManager extends ChangeNotifier {
           roleTitle: _bossProfile.roleTitle,
           restaurantName: restName ?? _bossProfile.restaurantName,
           restaurantId: restId ?? _bossProfile.restaurantId,
+          address: restAddress ?? _bossProfile.address,
+          phone: restPhone ?? _bossProfile.phone,
+          inn: restInn ?? _bossProfile.inn,
         );
       }
       final isLoggedInPref = prefs.getBool('chefcontrol_is_logged_in');
@@ -215,6 +228,9 @@ class SessionManager extends ChangeNotifier {
       await prefs.setString('chefcontrol_boss_name', _bossProfile.name);
       await prefs.setString('chefcontrol_rest_name', _bossProfile.restaurantName);
       await prefs.setString('chefcontrol_rest_id', _bossProfile.restaurantId);
+      await prefs.setString('chefcontrol_rest_address', _bossProfile.address);
+      await prefs.setString('chefcontrol_rest_phone', _bossProfile.phone);
+      await prefs.setString('chefcontrol_rest_inn', _bossProfile.inn);
     } catch (e) {
       debugPrint('Error saving boss: $e');
     }
@@ -241,6 +257,9 @@ class SessionManager extends ChangeNotifier {
       final client = Supabase.instance.client;
       client.from('restaurants').update({
         'name': _bossProfile.restaurantName,
+        'address': _bossProfile.address,
+        'phone': _bossProfile.phone,
+        'inn': _bossProfile.inn,
       }).eq('id', _bossProfile.restaurantId).catchError((e) {
         debugPrint('Supabase restaurant sync error: $e');
       });
@@ -357,6 +376,9 @@ class SessionManager extends ChangeNotifier {
     String? name,
     String? restaurantName,
     String? restaurantId,
+    String? address,
+    String? phone,
+    String? inn,
   }) {
     _bossProfile = BossProfile(
       id: _bossProfile.id,
@@ -364,6 +386,9 @@ class SessionManager extends ChangeNotifier {
       roleTitle: _bossProfile.roleTitle,
       restaurantName: restaurantName ?? _bossProfile.restaurantName,
       restaurantId: restaurantId ?? _bossProfile.restaurantId,
+      address: address ?? _bossProfile.address,
+      phone: phone ?? _bossProfile.phone,
+      inn: inn ?? _bossProfile.inn,
     );
     _saveBoss();
     _syncRestaurantToSupabase();

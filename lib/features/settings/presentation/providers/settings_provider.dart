@@ -95,6 +95,9 @@ class SettingsProvider with ChangeNotifier {
   bool updateProfile({
     required String name,
     required String restaurantName,
+    required String address,
+    required String phone,
+    required String inn,
   }) {
     final cleanName = name.trim();
     final cleanRestName = restaurantName.trim();
@@ -106,6 +109,9 @@ class SettingsProvider with ChangeNotifier {
     SessionManager().updateBossProfile(
       name: cleanName,
       restaurantName: cleanRestName,
+      address: address.trim(),
+      phone: phone.trim(),
+      inn: inn.trim(),
     );
 
     AuditService().logAction(

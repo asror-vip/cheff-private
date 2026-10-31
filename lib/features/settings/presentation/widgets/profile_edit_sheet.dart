@@ -28,6 +28,8 @@ class _ProfileEditSheetState extends State<ProfileEditSheet> {
   late final TextEditingController _nameController;
   late final TextEditingController _restNameController;
   late final TextEditingController _phoneController;
+  late final TextEditingController _addressController;
+  late final TextEditingController _innController;
   String _selectedCurrency = 'UZS';
 
   @override
@@ -36,7 +38,9 @@ class _ProfileEditSheetState extends State<ProfileEditSheet> {
     final boss = SessionManager().bossProfile;
     _nameController = TextEditingController(text: boss.name);
     _restNameController = TextEditingController(text: boss.restaurantName);
-    _phoneController = TextEditingController(text: '+998 90 123 45 67');
+    _phoneController = TextEditingController(text: boss.phone);
+    _addressController = TextEditingController(text: boss.address);
+    _innController = TextEditingController(text: boss.inn);
   }
 
   @override
@@ -44,6 +48,8 @@ class _ProfileEditSheetState extends State<ProfileEditSheet> {
     _nameController.dispose();
     _restNameController.dispose();
     _phoneController.dispose();
+    _addressController.dispose();
+    _innController.dispose();
     super.dispose();
   }
 
@@ -51,6 +57,9 @@ class _ProfileEditSheetState extends State<ProfileEditSheet> {
     final success = SettingsProvider().updateProfile(
       name: _nameController.text,
       restaurantName: _restNameController.text,
+      address: _addressController.text,
+      phone: _phoneController.text,
+      inn: _innController.text,
     );
 
     if (success) {
@@ -134,6 +143,43 @@ class _ProfileEditSheetState extends State<ProfileEditSheet> {
               labelText: 'settings.phone'.tr(),
               labelStyle: const TextStyle(color: AppColors.textSecondary),
               prefixIcon: const Icon(Icons.phone_outlined, color: Colors.green),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.white10),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.blueAccent),
+              ),
+            ),
+          ),
+          const SizedBox(height: 14),
+          TextField(
+            controller: _addressController,
+            style: const TextStyle(color: AppColors.textPrimary),
+            decoration: InputDecoration(
+              labelText: 'Restoran manzili',
+              labelStyle: const TextStyle(color: AppColors.textSecondary),
+              prefixIcon: const Icon(Icons.location_on, color: Colors.redAccent),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.white10),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.blueAccent),
+              ),
+            ),
+          ),
+          const SizedBox(height: 14),
+          TextField(
+            controller: _innController,
+            keyboardType: TextInputType.number,
+            style: const TextStyle(color: AppColors.textPrimary),
+            decoration: InputDecoration(
+              labelText: 'STIR / INN (Chek uchun)',
+              labelStyle: const TextStyle(color: AppColors.textSecondary),
+              prefixIcon: const Icon(Icons.receipt_long, color: Colors.purpleAccent),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: const BorderSide(color: Colors.white10),
