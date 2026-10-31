@@ -33,7 +33,7 @@ class _CreateZagatovkaSheetState extends State<CreateZagatovkaSheet> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<InventoryProvider>().fetchItems();
+      context.read<InventoryProvider>().fetchInventory();
     });
   }
 
@@ -43,8 +43,8 @@ class _CreateZagatovkaSheetState extends State<CreateZagatovkaSheet> {
     final allProducts = invProvider.items;
 
     // Filtrovka qilish (Zagatovkalar va Xomashyolar)
-    final zagatovkas = allProducts.where((p) => p.product.isSemiFinished).toList();
-    final rawMaterials = allProducts.where((p) => !p.product.isSemiFinished).toList();
+    final zagatovkas = allProducts.where((p) => p.isSemiFinished).toList();
+    final rawMaterials = allProducts.where((p) => !p.isSemiFinished).toList();
 
     return Padding(
       padding: EdgeInsets.only(
@@ -74,7 +74,7 @@ class _CreateZagatovkaSheetState extends State<CreateZagatovkaSheet> {
               enabledBorder: OutlineInputBorder(borderSide: const BorderSide(color: Colors.white10), borderRadius: BorderRadius.circular(12)),
               focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: Colors.blueAccent), borderRadius: BorderRadius.circular(12)),
             ),
-            items: zagatovkas.map((z) => DropdownMenuItem(value: z.product.id, child: Text('${z.product.name} (${z.product.unit})'))).toList(),
+            items: zagatovkas.map((z) => DropdownMenuItem(value: z.id, child: Text('${z.name} (${z.unit})'))).toList(),
             onChanged: (val) => setState(() => _selectedZagatovkaId = val),
           ),
           const SizedBox(height: 16),
@@ -96,7 +96,7 @@ class _CreateZagatovkaSheetState extends State<CreateZagatovkaSheet> {
           const SizedBox(height: 8),
 
           ..._ingredients.entries.map((e) {
-             final rm = rawMaterials.firstWhere((p) => p.product.id == e.key).product;
+             final rm = rawMaterials.firstWhere((p) => p.id == e.key;
              return ListTile(
                title: Text(rm.name, style: const TextStyle(color: AppColors.textPrimary)),
                subtitle: Text('${e.value} ${rm.unit}', style: const TextStyle(color: AppColors.textSecondary)),
@@ -118,7 +118,7 @@ class _CreateZagatovkaSheetState extends State<CreateZagatovkaSheet> {
                         DropdownButtonFormField<String>(
                           dropdownColor: AppColors.surfaceLight,
                           style: const TextStyle(color: AppColors.textPrimary),
-                          items: rawMaterials.map((p) => DropdownMenuItem(value: p.product.id, child: Text(p.product.name))).toList(),
+                          items: rawMaterials.map((p) => DropdownMenuItem(value: p.id, child: Text(p.name))).toList(),
                           onChanged: (val) => selId = val,
                         ),
                         const SizedBox(height: 10),
