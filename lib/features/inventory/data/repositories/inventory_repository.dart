@@ -33,6 +33,7 @@ class InventoryRepository {
         category: e.category,
         isLowStock: e.currentStock <= e.minimumStock,
         isNew: e.isNew,
+        isSemiFinished: e.isSemiFinished,
       )).toList();
     } catch (e) {
       debugPrint('Error fetching products: $e');
@@ -88,6 +89,7 @@ class InventoryRepository {
       totalValue: initialStock * costPrice,
       category: newProduct.category,
       isLowStock: initialStock <= newProduct.minimumStock,
+      isSemiFinished: newProduct.isSemiFinished,
     );
   }
 
@@ -134,6 +136,7 @@ class InventoryRepository {
         totalValue: initialStock * costPrice,
         category: p['category'],
         isLowStock: initialStock <= (p['minimumStock'] ?? 0.0),
+        isSemiFinished: p['is_semi_finished'] ?? false,
       ));
     }
 

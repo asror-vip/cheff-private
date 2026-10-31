@@ -7,6 +7,7 @@ class InventoryItem {
   final String category;
   final bool isLowStock;
   final bool isNew;
+  final bool isSemiFinished;
 
   InventoryItem({
     required this.id,
@@ -17,5 +18,6 @@ class InventoryItem {
     required this.category,
     this.isLowStock = false,
     this.isNew = false,
+    this.isSemiFinished = false,
   });
 }
