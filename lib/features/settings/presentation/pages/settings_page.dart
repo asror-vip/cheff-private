@@ -10,6 +10,7 @@ import '../widgets/units_sheet.dart';
 import '../widgets/system_status_sheet.dart';
 import '../widgets/help_support_sheet.dart';
 import '../widgets/language_dialog.dart';
+import '../widgets/printer_settings_sheet.dart';
 
 class SettingsPage extends StatelessWidget {
   final VoidCallback? onOpenStaff;
@@ -183,6 +184,14 @@ class SettingsPage extends StatelessWidget {
                       title: 'settings.system_status'.tr(),
                       subtitle: 'settings.db_connected'.tr(),
                       onTap: () => SystemStatusSheet.show(context),
+                    ),
+                    _buildDivider(),
+                    _buildSettingsTile(
+                      icon: Icons.print,
+                      iconColor: Colors.grey,
+                      title: 'Printer sozlamalari',
+                      subtitle: 'Kassa chekini ulash',
+                      onTap: () => PrinterSettingsSheet.show(context),
                     ),
                   ]),
 

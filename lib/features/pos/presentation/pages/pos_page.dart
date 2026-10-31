@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/session/session_manager.dart';
 import '../providers/pos_provider.dart';
+import '../data/services/printer_service.dart';
 import '../../../../features/tables/presentation/pages/tables_page.dart';
 import '../../../../features/tables/domain/entities/table_entity.dart';
 import '../../../orders/presentation/providers/orders_provider.dart';
@@ -269,10 +271,30 @@ class _PosPageState extends State<PosPage> {
                                             onConfirm: (payments) async {
                                               Navigator.pop(ctx);
                                               // KDS bilan ishlash keyingi bosqichda ko'rib chiqiladi. Hozircha oddiy checkout.
+                                              final cartItemsForPrint = List<Map<String, dynamic>>.from(provider.cart.values);
+                                              final totalForPrint = provider.totalAmount;
+                                              
                                               final success = await provider.checkout(payments);
                                               if (!context.mounted) return;
                                               if (success) {
                                                 ToastUtils.showSuccess(context, 'pos.payment_success'.tr());
+                                                // Printerni chaqirish
+                                                final session = SessionManager();
+                                                try {
+                                                  final printer = PrinterService();
+                                                  if (await printer.isConnected) {
+                                                    await printer.printReceipt(
+                                                      restaurantName: session.bossProfile.restaurantName,
+                                                      cashierName: session.currentEmployee?.name ?? session.bossProfile.name,
+                                                      orderName: _selectedTable != null ? _selectedTable!.name : 'Olib ketish',
+                                                      items: cartItemsForPrint,
+                                                      totalAmount: totalForPrint,
+                                                      payments: payments,
+                                                    );
+                                                  }
+                                                } catch (e) {
+                                                  ToastUtils.showError(context, 'Chek chiqarishda xato: $e');
+                                                }
                                               } else {
                                                 ToastUtils.showError(context, provider.error ?? 'common.error'.tr());
                                               }
@@ -300,10 +322,30 @@ class _PosPageState extends State<PosPage> {
                                           ? null
                                           : () async {
                                               final payments = {'cash': provider.totalAmount};
+                                              final cartItemsForPrint = List<Map<String, dynamic>>.from(provider.cart.values);
+                                              final totalForPrint = provider.totalAmount;
+                                              
                                               final success = await provider.checkout(payments);
                                               if (!context.mounted) return;
                                               if (success) {
                                                 ToastUtils.showSuccess(context, 'pos.payment_success'.tr());
+                                                // Printerni chaqirish
+                                                final session = SessionManager();
+                                                try {
+                                                  final printer = PrinterService();
+                                                  if (await printer.isConnected) {
+                                                    await printer.printReceipt(
+                                                      restaurantName: session.bossProfile.restaurantName,
+                                                      cashierName: session.currentEmployee?.name ?? session.bossProfile.name,
+                                                      orderName: _selectedTable != null ? _selectedTable!.name : 'Olib ketish',
+                                                      items: cartItemsForPrint,
+                                                      totalAmount: totalForPrint,
+                                                      payments: payments,
+                                                    );
+                                                  }
+                                                } catch (e) {
+                                                  ToastUtils.showError(context, 'Chek chiqarishda xato: $e');
+                                                }
                                               } else {
                                                 ToastUtils.showError(context, provider.error ?? 'common.error'.tr());
                                               }

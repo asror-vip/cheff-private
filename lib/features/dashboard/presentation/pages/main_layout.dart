@@ -4,6 +4,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../ai_assistant/presentation/pages/ai_assistant_page.dart';
 import '../../../pos/presentation/pages/pos_page.dart';
 import '../../../settings/presentation/pages/settings_page.dart';
+import '../../../search/presentation/pages/global_search_page.dart';
 import 'home_page.dart';
 
 import '../../../../core/session/session_manager.dart';
@@ -31,7 +32,7 @@ class _MainLayoutState extends State<MainLayout> {
 
     final pages = [
       HomePage(key: ValueKey('home_${currentLocale.toString()}')),
-      Center(child: Text('dashboard.nav_search'.tr())),
+      GlobalSearchPage(key: ValueKey('search_${currentLocale.toString()}')),
       const SizedBox(), // Placeholder for FAB
       AiAssistantPage(key: ValueKey('ai_${currentLocale.toString()}')),
       SettingsPage(key: ValueKey('settings_${currentLocale.toString()}')),
