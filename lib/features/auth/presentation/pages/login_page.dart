@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/session/session_manager.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_utils.dart';
@@ -29,9 +31,33 @@ class _LoginPageState extends State<LoginPage> {
 
   bool _obscurePassword = true;
   bool _isLoading = false;
+  StreamSubscription<AuthState>? _authSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _authSubscription = _authRepository.onAuthStateChange.listen((data) {
+      if (!mounted) return;
+      final session = data.session;
+      if (session != null && (data.event == AuthChangeEvent.signedIn || data.event == AuthChangeEvent.tokenRefreshed)) {
+        final user = session.user;
+        final fullName = user.userMetadata?['full_name'] as String? ?? 
+                         user.userMetadata?['name'] as String? ?? 
+                         user.email?.split('@').first;
+        final restName = user.userMetadata?['restaurant_name'] as String?;
+        SessionManager().updateBossProfile(
+          name: fullName,
+          restaurantName: restName,
+        );
+        SessionManager().switchToBoss();
+        _goToHome();
+      }
+    });
+  }
 
   @override
   void dispose() {
+    _authSubscription?.cancel();
     _emailController.dispose();
     _passwordController.dispose();
     _nameController.dispose();
@@ -146,16 +172,8 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> _handleGoogleSignIn() async {
     setState(() => _isLoading = true);
     try {
-      final success = await _authRepository.signInWithGoogle();
-      if (success) {
-        final user = _authRepository.currentUser;
-        if (user != null) {
-          final fullName = user.userMetadata?['full_name'] as String? ?? user.email?.split('@').first;
-          SessionManager().updateBossProfile(name: fullName);
-        }
-        SessionManager().switchToBoss();
-        _goToHome();
-      }
+      await _authRepository.signInWithGoogle();
+      // Browser launched; user logs in and redirects back via deep link
     } catch (e) {
       _showError('${'common.error'.tr()}: $e');
     } finally {
