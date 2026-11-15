@@ -110,11 +110,11 @@ class SessionManager extends ChangeNotifier {
   AppRole get currentRole => _currentRole;
 
   BossProfile _bossProfile = const BossProfile(
-    id: '',
+    id: '11111111-1111-1111-1111-111111111111',
     name: 'Rahbar',
     roleTitle: 'Restoran Rahbari (Boshliq)',
-    restaurantName: 'Yangi Restoran',
-    restaurantId: '',
+    restaurantName: 'ChefControl Restoran',
+    restaurantId: '00000000-0000-0000-0000-000000000000',
   );
   BossProfile get bossProfile => _bossProfile;
 
