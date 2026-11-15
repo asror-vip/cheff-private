@@ -203,7 +203,7 @@ class AiAssistantProvider extends ChangeNotifier {
         'role': 'system',
         'content':
             'Sen ChefControl AI - restoran boshqaruvi uchun o\'ta aqlli va professional AI agentisan.\n'
-            'Restoran egasi (rahbar), oshpaz va xodimlarga biznes tahlil, ombor va operatsion jarayonlarda yordam berasan. O\'zbek tilida qisqa, aniq va foydali javob ber.\n\n'
+            'Restoran egasi (rahbar), oshpaz va xodimlarga biznes tahlil, ombor va operatsion jarayonlarda yordam berasan. Foydalanuvchi qaysi tilda savol bersa (o\'zbek, rus yoki ingliz), javobni ham aynan o\'sha tilda qisqa, aniq va foydali qilib qaytar.\n\n'
             'RESTORANNING HOZIRGI REAL KO\'RSATKICHLARI (BUGUN):\n'
             '- Bugungi umumiy savdo: ${NumberFormat('#,###').format(totalSalesToday)} so\'m ($receiptsCount ta chek)\n'
             '- Bugungi operatsion xarajatlar: ${NumberFormat('#,###').format(totalExpensesToday)} so\'m\n'

@@ -294,11 +294,58 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 20),
                   _buildSocialButtons(),
                 ],
+                
+                const SizedBox(height: 24),
+                _buildTermsAndPrivacy(),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTermsAndPrivacy() {
+    return Column(
+      children: [
+        Text(
+          'auth.cloud_terms_notice'.tr(),
+          textAlign: TextAlign.center,
+          style: const TextStyle(color: AppColors.textSecondary, fontSize: 11, height: 1.4),
+        ),
+        const SizedBox(height: 8),
+        Wrap(
+          alignment: WrapAlignment.center,
+          children: [
+            GestureDetector(
+              onTap: () {},
+              child: Text(
+                'auth.terms_of_use'.tr(),
+                style: const TextStyle(
+                  color: Colors.blueAccent,
+                  fontSize: 12,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
+            Text(
+              'common.and'.tr(),
+              style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
+            ),
+            GestureDetector(
+              onTap: () {},
+              child: Text(
+                'auth.privacy_policy'.tr(),
+                style: const TextStyle(
+                  color: Colors.blueAccent,
+                  fontSize: 12,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 

@@ -14,7 +14,7 @@ class SalesProvider extends ChangeNotifier {
   String? _error;
   String? get error => _error;
 
-  final bool _useMockData = false;
+  
 
   Future<void> fetchTodaySales({bool background = false}) async {
     if (!background && _summary == null) {
@@ -25,16 +25,13 @@ class SalesProvider extends ChangeNotifier {
     
     try {
       final data = await _repository.getTodaySalesSummary();
-      if (data.totalReceipts == 0 && _useMockData) {
+      if (data.totalReceipts == 0) {
         _summary = _getMockSummary();
       } else {
         _summary = data;
       }
     } catch (e) {
       _error = e.toString();
-      if (_useMockData) {
-         _summary = _getMockSummary();
-      }
     }
     if (_isLoading) {
       _isLoading = false;

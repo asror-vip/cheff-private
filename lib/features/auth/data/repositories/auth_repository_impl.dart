@@ -62,6 +62,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<bool> signInWithGoogle() async {
     try {
+      // Supabase's native Google OAuth flow
       final res = await _client.auth.signInWithOAuth(
         OAuthProvider.google,
         redirectTo: kIsWeb ? null : 'io.supabase.chefcontrol://login-callback',
@@ -76,6 +77,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<bool> signInWithApple() async {
     try {
+      // Supabase's native Apple OAuth flow
       final res = await _client.auth.signInWithOAuth(
         OAuthProvider.apple,
         redirectTo: kIsWeb ? null : 'io.supabase.chefcontrol://login-callback',

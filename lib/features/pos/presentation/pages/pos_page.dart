@@ -42,7 +42,7 @@ class _PosPageState extends State<PosPage> {
       setState(() {
         _selectedTable = table;
       });
-      if (context.mounted) {
+      if (mounted) {
         context.read<OrdersProvider>().openOrderForTable(table, context.read<TablesProvider>());
         Navigator.push(
           context,
@@ -293,7 +293,7 @@ class _PosPageState extends State<PosPage> {
                                                     );
                                                   }
                                                 } catch (e) {
-                                                  ToastUtils.showError(context, 'Chek chiqarishda xato: $e');
+                                                  if (context.mounted) ToastUtils.showError(context, 'Chek chiqarishda xato: $e');
                                                 }
                                               } else {
                                                 ToastUtils.showError(context, provider.error ?? 'common.error'.tr());
@@ -344,7 +344,7 @@ class _PosPageState extends State<PosPage> {
                                                     );
                                                   }
                                                 } catch (e) {
-                                                  ToastUtils.showError(context, 'Chek chiqarishda xato: $e');
+                                                  if (context.mounted) ToastUtils.showError(context, 'Chek chiqarishda xato: $e');
                                                 }
                                               } else {
                                                 ToastUtils.showError(context, provider.error ?? 'common.error'.tr());

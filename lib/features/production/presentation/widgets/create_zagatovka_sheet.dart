@@ -58,18 +58,18 @@ class _CreateZagatovkaSheetState extends State<CreateZagatovkaSheet> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Zagatovka tayyorlash', style: TextStyle(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold)),
+              Text('production.title'.tr(), style: const TextStyle(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold)),
               IconButton(icon: const Icon(Icons.close, color: AppColors.textSecondary), onPressed: () => Navigator.pop(context)),
             ],
           ),
           const SizedBox(height: 16),
 
           DropdownButtonFormField<String>(
-            value: _selectedZagatovkaId,
+            initialValue: _selectedZagatovkaId,
             dropdownColor: AppColors.surfaceLight,
             style: const TextStyle(color: AppColors.textPrimary),
             decoration: InputDecoration(
-              labelText: 'Zagatovka turini tanlang',
+              labelText: 'production.select_product'.tr(),
               labelStyle: const TextStyle(color: AppColors.textSecondary),
               enabledBorder: OutlineInputBorder(borderSide: const BorderSide(color: Colors.white10), borderRadius: BorderRadius.circular(12)),
               focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: Colors.blueAccent), borderRadius: BorderRadius.circular(12)),
@@ -96,7 +96,7 @@ class _CreateZagatovkaSheetState extends State<CreateZagatovkaSheet> {
           const SizedBox(height: 8),
 
           ..._ingredients.entries.map((e) {
-             final rm = rawMaterials.firstWhere((p) => p.id == e.key;
+             final rm = rawMaterials.firstWhere((p) => p.id == e.key);
              return ListTile(
                title: Text(rm.name, style: const TextStyle(color: AppColors.textPrimary)),
                subtitle: Text('${e.value} ${rm.unit}', style: const TextStyle(color: AppColors.textSecondary)),
@@ -131,7 +131,7 @@ class _CreateZagatovkaSheetState extends State<CreateZagatovkaSheet> {
                       ],
                     ),
                     actions: [
-                      TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Bekor qilish')),
+                      TextButton(onPressed: () => Navigator.pop(ctx), child: Text('common.cancel'.tr())),
                       ElevatedButton(
                         onPressed: () {
                            if (selId != null && qCtrl.text.isNotEmpty) {
@@ -139,7 +139,7 @@ class _CreateZagatovkaSheetState extends State<CreateZagatovkaSheet> {
                               Navigator.pop(ctx);
                            }
                         },
-                        child: const Text('Qo`shish')
+                        child: Text('common.add'.tr())
                       )
                     ],
                   );

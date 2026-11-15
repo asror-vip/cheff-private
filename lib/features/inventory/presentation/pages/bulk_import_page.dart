@@ -50,7 +50,7 @@ List<Map<String, dynamic>> _parseExcelInIsolate(String path) {
           } else {
             strScore++;
             String vLower = val.toLowerCase();
-            if (['кг', 'шт', 'л', 'г', 'гр', 'порц', 'упак', 'kg', 'litr', 'dona'].contains(vLower)) {
+            if (['kg', 'sht', 'l', 'g', 'gr', 'pors', 'upak', 'kg', 'litr', 'dona'].contains(vLower)) {
               unitScore += 5;
             }
           }

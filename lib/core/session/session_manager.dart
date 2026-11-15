@@ -110,37 +110,15 @@ class SessionManager extends ChangeNotifier {
   AppRole get currentRole => _currentRole;
 
   BossProfile _bossProfile = const BossProfile(
-    id: '11111111-1111-1111-1111-111111111111',
-    name: 'Alisher Usmonov',
+    id: '',
+    name: 'Rahbar',
     roleTitle: 'Restoran Rahbari (Boshliq)',
-    restaurantName: 'Rayhon Milliy Taomlar',
-    restaurantId: '00000000-0000-0000-0000-000000000000',
+    restaurantName: 'Yangi Restoran',
+    restaurantId: '',
   );
   BossProfile get bossProfile => _bossProfile;
 
-  final List<EmployeeProfile> _employees = [
-    const EmployeeProfile(
-      id: 'EMP-101',
-      name: 'Bobur Aliyev',
-      assignedDepartment: Department.warehouse,
-      status: 'active',
-      roleName: 'Ombor mudiri',
-    ),
-    const EmployeeProfile(
-      id: 'EMP-102',
-      name: 'Malika Karimova',
-      assignedDepartment: Department.pos,
-      status: 'active',
-      roleName: 'Kassir',
-    ),
-    const EmployeeProfile(
-      id: 'EMP-103',
-      name: 'Jasur Shodiyev',
-      assignedDepartment: Department.none,
-      status: 'waiting',
-      roleName: 'Yangi xodim (Kutilmoqda)',
-    ),
-  ];
+  final List<EmployeeProfile> _employees = [];
   List<EmployeeProfile> get employees => List.unmodifiable(_employees);
 
   EmployeeProfile? _currentEmployee;

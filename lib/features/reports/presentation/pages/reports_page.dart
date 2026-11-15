@@ -1,4 +1,3 @@
-import 'package:chefcontrol/core/utils/toast_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:excel/excel.dart' hide Border;
@@ -180,10 +179,12 @@ class ReportsPage extends StatelessWidget {
                       final directory = await getTemporaryDirectory();
                       final file = File('${directory.path}/Hisobot_${DateTime.now().millisecondsSinceEpoch}.xlsx');
                       await file.writeAsBytes(fileBytes);
-                      await Share.shareXFiles([XFile(file.path)], text: title);
+                      await SharePlus.instance.share(ShareParams(files: [XFile(file.path)], text: title));
                     }
                   } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Xato: $e')));
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Xato: $e')));
+                    }
                   }
                 },
               ),

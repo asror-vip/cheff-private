@@ -18,6 +18,7 @@ import '../../../production/presentation/pages/production_page.dart';
 import '../../../cashier_shifts/presentation/pages/shift_page.dart';
 import '../../../tables/presentation/pages/tables_page.dart';
 import '../../../kitchen/presentation/pages/kitchen_page.dart';
+import '../../../notifications/presentation/pages/notifications_page.dart';
 
 class _MenuItemConfig {
   final String title;
@@ -178,7 +179,7 @@ class HomePage extends StatelessWidget {
                 Text(
                   isOwner
                       ? 'staff.role_owner'.tr()
-                      : '${currentEmp?.name ?? "staff.employee".tr()} (${currentEmp?.id ?? ""})',
+                      : (currentEmp?.name ?? "staff.employee".tr()),
                   style: TextStyle(
                     fontSize: 12,
                     color: isOwner ? Colors.blueAccent : Colors.orangeAccent,
@@ -239,7 +240,12 @@ class HomePage extends StatelessWidget {
                   ),
                   child: const Icon(Icons.notifications_none, color: AppColors.textPrimary),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const NotificationsPage()),
+                  );
+                },
               ),
               const SizedBox(width: 8),
             ],
@@ -501,7 +507,7 @@ class HomePage extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        '${emp?.roleName ?? ""} • ID: ${emp?.id ?? ""}',
+                        '${emp?.roleName ?? ""}  ID: ${emp?.id ?? ""}',
                         style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
                       ),
                     ],
@@ -757,8 +763,15 @@ class HomePage extends StatelessWidget {
                       ? const Icon(Icons.check_circle, color: Colors.blueAccent)
                       : null,
                   onTap: () {
-                    session.switchToBoss();
-                    Navigator.pop(context);
+                    // Security fix: Bossga o'tishda PIN kod yoki ogohlantirish (mock holati uchun shunchaki so'rov)
+                    if (session.currentRole != AppRole.owner) {
+                       Navigator.pop(context); // close sheet
+                       ScaffoldMessenger.of(context).showSnackBar(
+                         SnackBar(content: Text('auth.switch_to_boss_pin_required'.tr())),
+                       );
+                    } else {
+                       Navigator.pop(context);
+                    }
                   },
                 ),
                 const Divider(color: Colors.white10),
@@ -778,7 +791,7 @@ class HomePage extends StatelessWidget {
                       style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600),
                     ),
                     subtitle: Text(
-                      '${emp.id} • ${emp.roleName}',
+                      '${emp.id}  ${emp.roleName}',
                       style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
                     ),
                     trailing: isCurrent ? const Icon(Icons.check_circle, color: Colors.orangeAccent) : null,

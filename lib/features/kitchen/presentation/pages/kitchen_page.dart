@@ -189,23 +189,22 @@ class KitchenPage extends StatelessWidget {
     if (isMobile) {
       return columnContent;
     } else {
-      return Expanded(
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              width: double.infinity,
-              color: AppColors.surface,
-              child: Text(
-                '$title (${items.length})',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: color),
-                textAlign: TextAlign.center,
-              ),
+      return Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            width: double.infinity,
+            color: AppColors.surface,
+            child: Text(
+              '$title (${items.length})',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: color),
+              textAlign: TextAlign.center,
             ),
-            Expanded(
-              child: items.isEmpty
-                  ? Center(
-                      child: Text(
+          ),
+          Expanded(
+            child: items.isEmpty
+                ? Center(
+                    child: Text(
                         'kitchen.empty'.tr(),
                         style: const TextStyle(color: AppColors.textSecondary),
                       ),
@@ -219,8 +218,7 @@ class KitchenPage extends StatelessWidget {
                     ),
             ),
           ],
-        ),
-      );
+        );
     }
   }
 

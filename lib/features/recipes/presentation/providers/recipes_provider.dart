@@ -20,8 +20,8 @@ class RecipesProvider extends ChangeNotifier {
   String? _error;
   String? get error => _error;
 
-  // For testing, mock data fallback
-  final bool _useMockData = false;
+  
+  
 
   List<IngredientOption> _cachedIngredientOptions = [];
   bool _hasLoadedIngredients = false;
@@ -79,9 +79,6 @@ class RecipesProvider extends ChangeNotifier {
       
     } catch (e) {
       _error = e.toString();
-      if (_useMockData) {
-         _recipes = _getMockRecipes();
-      }
     }
     if (!background) {
       _isLoading = false;
@@ -181,35 +178,6 @@ class RecipesProvider extends ChangeNotifier {
     
     _isLoading = false;
     notifyListeners();
-  }
-
-  // Fallback data if DB is empty or disconnected
-  List<RecipeEntity> _getMockRecipes() {
-    return [
-      RecipeEntity(
-        id: '1',
-        name: 'Ribay Steyk',
-        category: 'Issiq taomlar',
-        sellingPrice: 150000,
-        outputQuantity: 350,
-        outputUnit: 'g',
-        isActive: true,
-        items: [
-          RecipeItemEntity(id: 'i1', recipeId: '1', productId: 'p1', productName: 'Go\'sht', quantity: 400, unit: 'g', productPrice: 90000 / 1000),
-          RecipeItemEntity(id: 'i2', recipeId: '1', productId: 'p2', productName: 'Sariyog\'', quantity: 30, unit: 'g', productPrice: 40000 / 1000),
-        ],
-      ),
-      RecipeEntity(
-        id: '2',
-        name: 'Sezar Salati',
-        category: 'Salatlar',
-        sellingPrice: 75000,
-        outputQuantity: 250,
-        outputUnit: 'g',
-        isActive: true,
-        items: [],
-      ),
-    ];
   }
 
   Future<void> uploadRecipeImage(String recipeId, String imagePath) async {

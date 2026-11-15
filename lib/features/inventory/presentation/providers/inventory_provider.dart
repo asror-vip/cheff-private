@@ -17,7 +17,7 @@ class InventoryProvider extends ChangeNotifier {
   String? _error;
   String? get error => _error;
 
-  final bool _useMockData = false;
+  
 
   Future<void> fetchInventory({bool background = false}) async {
     if (!background && _items.isEmpty) {
@@ -28,16 +28,13 @@ class InventoryProvider extends ChangeNotifier {
     
     try {
       final data = await _repository.getProducts();
-      if (data.isEmpty && _useMockData) {
+      if (data.isEmpty) {
         _items = _getMockInventory();
       } else {
         _items = data;
       }
     } catch (e) {
       _error = e.toString();
-      if (_useMockData) {
-         _items = _getMockInventory();
-      }
     }
     
     if (!background) {

@@ -11,6 +11,7 @@ import '../widgets/system_status_sheet.dart';
 import '../widgets/help_support_sheet.dart';
 import '../widgets/language_dialog.dart';
 import '../widgets/printer_settings_sheet.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatelessWidget {
   final VoidCallback? onOpenStaff;
@@ -211,54 +212,101 @@ class SettingsPage extends StatelessWidget {
 
                   const SizedBox(height: 20),
 
-                  // Logout Tile
+                  // Section 4: Legal & Documents
+                  _buildSectionHeader('settings.legal_documents'.tr()),
+                  _buildSettingsCard([
+                    _buildSettingsTile(
+                      icon: Icons.privacy_tip_outlined,
+                      iconColor: Colors.purpleAccent,
+                      title: 'settings.privacy_policy'.tr(),
+                      onTap: () => _launchURL('https://chefcontrol.ai/privacy-policy'),
+                    ),
+                    _buildDivider(),
+                    _buildSettingsTile(
+                      icon: Icons.gavel_outlined,
+                      iconColor: Colors.deepPurpleAccent,
+                      title: 'settings.terms_of_use'.tr(),
+                      onTap: () => _launchURL('https://chefcontrol.ai/terms-of-use'),
+                    ),
+                  ]),
+                  
+                  const SizedBox(height: 20),
+
+                  // Danger Zone (Account Deletion & Logout)
+                  _buildSectionHeader('auth.danger_zone'.tr()),
                   Container(
                     decoration: BoxDecoration(
                       color: AppColors.surface,
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(color: Colors.redAccent.withValues(alpha: 0.3)),
                     ),
-                    child: ListTile(
-                      leading: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.redAccent.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Icon(Icons.logout, color: Colors.redAccent, size: 20),
-                      ),
-                      title: Text(
-                        'auth.logout'.tr(),
-                        style: const TextStyle(
-                          color: Colors.redAccent,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (ctx) => AlertDialog(
-                            backgroundColor: AppColors.surface,
-                            title: Text('auth.logout'.tr(), style: const TextStyle(color: Colors.white)),
-                            content: Text('auth.logout_confirm'.tr(), style: const TextStyle(color: AppColors.textSecondary)),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(ctx),
-                                child: Text('common.cancel'.tr(), style: const TextStyle(color: Colors.white60)),
-                              ),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
-                                onPressed: () async {
-                                  Navigator.pop(ctx);
-                                  await session.logout();
-                                },
-                                child: Text('auth.logout'.tr()),
-                              ),
-                            ],
+                    child: Column(
+                      children: [
+                        ListTile(
+                          leading: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.redAccent.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Icon(Icons.delete_forever, color: Colors.redAccent, size: 20),
                           ),
-                        );
-                      },
+                          title: Text(
+                            'settings.delete_account'.tr(),
+                            style: const TextStyle(
+                              color: Colors.redAccent,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          onTap: () {
+                            // TODO: Implement actual deletion request to Supabase API
+                          },
+                        ),
+                        _buildDivider(),
+                        ListTile(
+                          leading: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.redAccent.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Icon(Icons.logout, color: Colors.redAccent, size: 20),
+                          ),
+                          title: Text(
+                            'auth.logout'.tr(),
+                            style: const TextStyle(
+                              color: Colors.redAccent,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (ctx) => AlertDialog(
+                                backgroundColor: AppColors.surface,
+                                title: Text('auth.logout'.tr(), style: const TextStyle(color: Colors.white)),
+                                content: Text('auth.logout_confirm'.tr(), style: const TextStyle(color: AppColors.textSecondary)),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(ctx),
+                                    child: Text('common.cancel'.tr(), style: const TextStyle(color: Colors.white60)),
+                                  ),
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
+                                    onPressed: () async {
+                                      Navigator.pop(ctx);
+                                      await session.logout();
+                                    },
+                                    child: Text('auth.logout'.tr()),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ],
                     ),
                   ),
 
@@ -353,5 +401,12 @@ class SettingsPage extends StatelessWidget {
       trailing: const Icon(Icons.chevron_right, color: AppColors.textSecondary, size: 20),
       onTap: onTap,
     );
+  }
+
+  Future<void> _launchURL(String urlStr) async {
+    final uri = Uri.parse(urlStr);
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      debugPrint('Could not launch $urlStr');
+    }
   }
 }

@@ -32,7 +32,13 @@
     "fill_all_fields": "Пожалуйста, заполните все поля",
     "registration_success": "Регистрация прошла успешно!",
     "logout": "Выйти из системы",
-    "logout_confirm": "Вы действительно хотите выйти из системы?"
+    "logout_confirm": "Вы действительно хотите выйти из системы?",
+    "cloud_terms_notice": "Входя или регистрируясь в системе, вы соглашаетесь на хранение данных на облачных серверах и со следующими условиями:",
+    "terms_of_use": "Условия использования",
+    "privacy_policy": "Политика конфиденциальности",
+    "danger_zone": "Опасная зона (Управление аккаунтом)",
+    "delete_account": "Удалить аккаунт (Delete Account)",
+    "switch_to_boss_pin_required": "Безопасность: Для перехода в профиль руководителя требуется PIN-код (Пока заблокировано)"
   },
   "dashboard": {
     "app_title": "ChefControl AI",
@@ -370,6 +376,10 @@
     "audit_records_saved": "{} записей сохранено",
     "app_version_title": "Версия приложения",
     "app_tagline": "ChefControl AI • Управление рестораном",
+    "legal_documents": "Юридические документы",
+    "privacy_policy": "Политика конфиденциальности (Privacy Policy)",
+    "terms_of_use": "Условия использования (Terms of Use)",
+    "delete_account": "Удалить аккаунт (Delete Account)",
     "telegram_support_center": "Центр поддержки Telegram",
     "lang_uz_latin": "Узбекский (Латиница)",
     "lang_uz_cyrl": "Узбекский (Кириллица)",
@@ -446,7 +456,8 @@
     "error": "Ошибка",
     "confirm": "Подтвердить",
     "no_data": "Нет данных",
-    "currency_sum": "сум"
+    "currency_sum": "сум",
+    "and": " и "
   },
   "kitchen": {
     "title": "Экран кухни (KDS)",

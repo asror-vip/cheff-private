@@ -124,11 +124,9 @@ class _ShiftPageState extends State<ShiftPage> {
   }
 
   Widget _buildCloseShift(CashierShiftsProvider provider) {
-    // Haqiqiy dasturda bu raqamlar POS dan SalesRepository orqali tortib kelinadi.
-    // Hozir UI / Zanjir ko'rinishi uchun mock
     final shift = provider.activeShift!;
-    final expectedCash = shift.initialCash + 1500000; // Mock: Bugungi savdo naqd
-    final expectedCard = 850000.0; // Mock: Bugungi savdo plastikka
+    final expectedCash = shift.expectedCash;
+    final expectedCard = shift.expectedCard;
 
     final formatter = NumberFormat.currency(locale: 'uz', symbol: 'so\'m', decimalDigits: 0);
 

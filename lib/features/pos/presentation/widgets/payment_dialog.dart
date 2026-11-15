@@ -123,7 +123,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: _remaining < 0 ? AppColors.warning.withOpacity(0.1) : AppColors.surface,
+                      color: _remaining < 0 ? AppColors.warning.withValues(alpha: 0.1) : AppColors.surface,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
@@ -228,7 +228,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 20),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                            disabledBackgroundColor: AppColors.success.withOpacity(0.3),
+                            disabledBackgroundColor: AppColors.success.withValues(alpha: 0.3),
                           ),
                           child: const Text('To\'lash', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                         ),
@@ -252,7 +252,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         decoration: BoxDecoration(
-          color: isActive ? iconColor.withOpacity(0.1) : AppColors.surface,
+          color: isActive ? iconColor.withValues(alpha: 0.1) : AppColors.surface,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: isActive ? iconColor : Colors.white10, width: isActive ? 2 : 1),
         ),
@@ -288,7 +288,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
               height: 65,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: k == 'C' ? AppColors.error.withOpacity(0.1) : AppColors.surface,
+                color: k == 'C' ? AppColors.error.withValues(alpha: 0.1) : AppColors.surface,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: Colors.white10),
               ),

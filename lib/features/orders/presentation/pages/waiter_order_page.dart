@@ -51,11 +51,11 @@ class _WaiterOrderPageState extends State<WaiterOrderPage> {
                         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                       ),
                       width: double.infinity,
-                      child: Text('Menyu', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary), textAlign: TextAlign.center),
+                      child: Text('dashboard.menu_foodcost'.tr(), style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary), textAlign: TextAlign.center),
                     ),
                     Expanded(
                       child: recipes.isEmpty 
-                        ? Center(child: Text('Menyuda taomlar yo\'q', style: const TextStyle(color: AppColors.textSecondary)))
+                        ? Center(child: Text('kitchen.empty'.tr(), style: const TextStyle(color: AppColors.textSecondary)))
                         : ListView.builder(
                             controller: controller,
                             padding: const EdgeInsets.all(8),

@@ -32,7 +32,13 @@
     "fill_all_fields": "Илтимос, барча майдонларни тўлдиринг",
     "registration_success": "Муваффақиятли рўйхатдан ўтдингиз!",
     "logout": "Тизимдан чиқиш",
-    "logout_confirm": "Ҳақиқатан ҳам тизимдан чиқмоқчимисиз?"
+    "logout_confirm": "Ҳақиқатан ҳам тизимдан чиқмоқчимисиз?",
+    "cloud_terms_notice": "Тизимга кириш ёки рўйхатдан ўтиш орқали сиз маълумотларингиз хорижий серверларда (Cloud) сақланишига ва қуйидаги шартларга рози бўласиз:",
+    "terms_of_use": "Фойдаланиш шартлари",
+    "privacy_policy": "Махфийлик сиёсати",
+    "danger_zone": "Хавфли ҳудуд (Ҳисоб бошқаруви)",
+    "delete_account": "Ҳисобни ўчириш (Delete Account)",
+    "switch_to_boss_pin_required": "Хавфсизлик: Бошлиқ профилига ўтиш учун PIN код керак (Ҳозирча блокланган)"
   },
   "dashboard": {
     "app_title": "ЧефCонтрол АИ",
@@ -370,6 +376,10 @@
     "audit_records_saved": "{} та ёзув сақланган",
     "app_version_title": "Илова версияси",
     "app_tagline": "ChefControl AI • Ресторан бошқаруви",
+    "legal_documents": "Ҳуқуқий ҳужжатлар",
+    "privacy_policy": "Махфийлик сиёсати (Privacy Policy)",
+    "terms_of_use": "Фойдаланиш шартлари (Terms of Use)",
+    "delete_account": "Ҳисобни ўчириш (Delete Account)",
     "telegram_support_center": "Telegram Ёрдам Маркази",
     "lang_uz_latin": "Ўзбекча (Лотин)",
     "lang_uz_cyrl": "Ўзбекча (Кирилл)",
@@ -446,7 +456,8 @@
     "error": "Хатолик",
     "confirm": "Тасдиқлаш",
     "no_data": "Маълумот йўқ",
-    "currency_sum": "сўм"
+    "currency_sum": "сўм",
+    "and": " ва "
   },
   "kitchen": {
     "title": "Ошхона экрани",

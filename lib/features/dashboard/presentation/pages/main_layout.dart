@@ -96,14 +96,17 @@ class _MainLayoutState extends State<MainLayout> {
     final isSelected = _currentIndex == index;
     final color = isSelected ? Colors.deepOrange : AppColors.textSecondary;
     
-    return InkWell(
+    return InkResponse(
       onTap: () => _onTabTapped(index),
+      radius: 32,
+      splashColor: Colors.deepOrange.withValues(alpha: 0.1),
+      highlightColor: Colors.transparent,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, color: color, size: 22),
-          const SizedBox(height: 3),
+          Icon(icon, color: color, size: 24),
+          const SizedBox(height: 4),
           Text(
             label,
             maxLines: 1,
@@ -111,7 +114,7 @@ class _MainLayoutState extends State<MainLayout> {
             style: TextStyle(
               color: color,
               fontSize: 10,
-              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
             ),
           ),
         ],

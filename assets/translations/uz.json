@@ -32,7 +32,13 @@
     "fill_all_fields": "Iltimos, barcha maydonlarni to'ldiring",
     "registration_success": "Muvaffaqiyatli ro'yxatdan o'tdingiz!",
     "logout": "Tizimdan chiqish",
-    "logout_confirm": "Haqiqatan ham tizimdan chiqmoqchimisiz?"
+    "logout_confirm": "Haqiqatan ham tizimdan chiqmoqchimisiz?",
+    "cloud_terms_notice": "Tizimga kirish yoki ro'yxatdan o'tish orqali siz\nma'lumotlaringiz xorijiy serverlarda (Cloud)\nsaqlanishiga va quyidagi shartlarga rozi bo'lasiz:",
+    "terms_of_use": "Foydalanish shartlari",
+    "privacy_policy": "Maxfiylik siyosati",
+    "danger_zone": "Xavfli hudud (Hisob boshqaruvi)",
+    "delete_account": "Hisobni o'chirish (Delete Account)",
+    "switch_to_boss_pin_required": "Xavfsizlik: Boshliq profiliga o'tish uchun PIN kod kerak (Hozircha bloklangan)"
   },
   "dashboard": {
     "app_title": "ChefControl AI",
@@ -370,6 +376,10 @@
     "audit_records_saved": "{} ta yozuv saqlangan",
     "app_version_title": "Ilova versiyasi",
     "app_tagline": "ChefControl AI • Restoran boshqaruvi",
+    "legal_documents": "Huquqiy hujjatlar",
+    "privacy_policy": "Maxfiylik siyosati (Privacy Policy)",
+    "terms_of_use": "Foydalanish shartlari (Terms of Use)",
+    "delete_account": "Hisobni o'chirish (Delete Account)",
     "telegram_support_center": "Telegram Yordam Markazi",
     "lang_uz_latin": "O'zbekcha (Lotin)",
     "lang_uz_cyrl": "Ўзбекча (Кирилл)",
@@ -446,7 +456,8 @@
     "error": "Xatolik",
     "confirm": "Tasdiqlash",
     "no_data": "Ma'lumot yo'q",
-    "currency_sum": "so'm"
+    "currency_sum": "so'm",
+    "and": " va "
   },
   "kitchen": {
     "title": "Oshxona ekrani",

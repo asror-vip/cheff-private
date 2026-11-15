@@ -14,7 +14,7 @@ class FinanceProvider extends ChangeNotifier {
   String? _error;
   String? get error => _error;
 
-  final bool _useMockData = false;
+  
   DateTime _currentDate = DateTime.now();
   DateTime get currentDate => _currentDate;
 
@@ -27,16 +27,13 @@ class FinanceProvider extends ChangeNotifier {
     
     try {
       final data = await _repository.getMonthlyFinance(_currentDate.year, _currentDate.month);
-      if (data.revenue == 0 && data.expenses == 0 && _useMockData) {
+      if (data.revenue == 0 && data.expenses == 0) {
         _summary = _getMockSummary();
       } else {
         _summary = data;
       }
     } catch (e) {
       _error = e.toString();
-      if (_useMockData) {
-         _summary = _getMockSummary();
-      }
     }
     if (_isLoading) {
       _isLoading = false;

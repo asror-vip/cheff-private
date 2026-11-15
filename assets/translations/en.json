@@ -32,7 +32,13 @@
     "fill_all_fields": "Please fill in all fields",
     "registration_success": "Registration successful!",
     "logout": "Sign Out",
-    "logout_confirm": "Are you sure you want to sign out?"
+    "logout_confirm": "Are you sure you want to sign out?",
+    "cloud_terms_notice": "By signing in or registering, you agree to your data being stored on cloud servers and to the following terms:",
+    "terms_of_use": "Terms of Use",
+    "privacy_policy": "Privacy Policy",
+    "danger_zone": "Danger Zone (Account Management)",
+    "delete_account": "Delete Account",
+    "switch_to_boss_pin_required": "Security: PIN required to switch to Owner profile (Currently locked)"
   },
   "dashboard": {
     "app_title": "ChefControl AI",
@@ -370,6 +376,10 @@
     "audit_records_saved": "{} records stored",
     "app_version_title": "App Version",
     "app_tagline": "ChefControl AI • Restaurant Management",
+    "legal_documents": "Legal Documents",
+    "privacy_policy": "Privacy Policy",
+    "terms_of_use": "Terms of Use",
+    "delete_account": "Delete Account",
     "telegram_support_center": "Telegram Support Center",
     "lang_uz_latin": "Uzbek (Latin)",
     "lang_uz_cyrl": "Uzbek (Cyrillic)",
@@ -446,7 +456,8 @@
     "error": "Error",
     "confirm": "Confirm",
     "no_data": "No data",
-    "currency_sum": "sum"
+    "currency_sum": "sum",
+    "and": " and "
   },
   "kitchen": {
     "title": "Kitchen Display",

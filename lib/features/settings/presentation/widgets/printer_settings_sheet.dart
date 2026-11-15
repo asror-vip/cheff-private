@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:blue_thermal_printer/blue_thermal_printer.dart';
-import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../pos/data/services/printer_service.dart';
 import '../../../../core/utils/toast_utils.dart';
@@ -94,7 +93,7 @@ class _PrinterSettingsSheetState extends State<PrinterSettingsSheet> {
          payments: {'cash': 35000},
        );
     } catch (e) {
-       ToastUtils.showError(context, e.toString());
+       if (mounted) ToastUtils.showError(context, e.toString());
     }
   }
 
@@ -143,7 +142,7 @@ class _PrinterSettingsSheetState extends State<PrinterSettingsSheet> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: _isConnected ? Colors.green.withOpacity(0.1) : AppColors.surfaceLight,
+                color: _isConnected ? Colors.green.withValues(alpha: 0.1) : AppColors.surfaceLight,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: _isConnected ? Colors.green : Colors.white10),
               ),

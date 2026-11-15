@@ -43,10 +43,15 @@ class TablesRepository {
   TableEntity _fromMap(Map<String, dynamic> map) {
     String statusStr = map['status'] ?? 'available';
     TableStatus ts = TableStatus.available;
-    if (statusStr == 'occupied') ts = TableStatus.occupied;
-    else if (statusStr == 'bill_requested') ts = TableStatus.billRequested;
-    else if (statusStr == 'cleaning') ts = TableStatus.cleaning;
-    else if (statusStr == 'out_of_service') ts = TableStatus.outOfService;
+    if (statusStr == 'occupied') {
+      ts = TableStatus.occupied;
+    } else if (statusStr == 'bill_requested') {
+      ts = TableStatus.billRequested;
+    } else if (statusStr == 'cleaning') {
+      ts = TableStatus.cleaning;
+    } else if (statusStr == 'out_of_service') {
+      ts = TableStatus.outOfService;
+    }
 
     return TableEntity(
       id: map['id'],

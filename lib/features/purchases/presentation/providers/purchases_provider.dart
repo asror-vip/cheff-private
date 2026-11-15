@@ -16,7 +16,7 @@ class PurchasesProvider extends ChangeNotifier {
   String? _error;
   String? get error => _error;
 
-  final bool _useMockData = false;
+  
 
   Future<void> fetchPurchases({bool background = false}) async {
     if (!background && _orders.isEmpty) {
@@ -27,16 +27,13 @@ class PurchasesProvider extends ChangeNotifier {
     
     try {
       final data = await _repository.getPurchases();
-      if (data.isEmpty && _useMockData) {
+      if (data.isEmpty) {
         _orders = _getMockOrders();
       } else {
         _orders = data;
       }
     } catch (e) {
       _error = e.toString();
-      if (_useMockData) {
-         _orders = _getMockOrders();
-      }
     }
     if (_isLoading) {
       _isLoading = false;

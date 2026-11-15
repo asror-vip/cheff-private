@@ -10,7 +10,7 @@ class KitchenRepository {
   // Real loyihada order_items va orders larni JOIN qilib view orqali olish tavsiya etiladi.
   Stream<List<KitchenItemEntity>> streamKitchenItems(String station) {
     return _client
-        .from('kds_view') // Buni RPC yoki Supabase view qilib olish kerak, hozircha mock view kabi
+        .from('kds_view') 
         .stream(primaryKey: ['id'])
         .eq('restaurant_id', SupabaseService.currentRestaurantId)
         .eq('station', station)
@@ -28,7 +28,7 @@ class KitchenRepository {
         'updated_at': DateTime.now().toIso8601String(),
       }).eq('id', itemId);
     } catch (e) {
-      // Fallback
+      throw Exception('Oshxona bazasini yangilashda xatolik: $e');
     }
   }
   
@@ -40,7 +40,7 @@ class KitchenRepository {
         'updated_at': DateTime.now().toIso8601String(),
       }).eq('id', itemId);
     } catch (e) {
-      // Fallback
+      throw Exception('Buyurtmani bekor qilishda xatolik: $e');
     }
   }
 

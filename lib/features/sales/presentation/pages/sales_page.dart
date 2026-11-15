@@ -67,7 +67,7 @@ class _SalesPageState extends State<SalesPage> {
         final directory = await getTemporaryDirectory();
         final file = File('${directory.path}/Savdo_${DateTime.now().millisecondsSinceEpoch}.xlsx');
         await file.writeAsBytes(fileBytes);
-        await Share.shareXFiles([XFile(file.path)], text: 'Savdo Hisoboti');
+        await SharePlus.instance.share(ShareParams(files: [XFile(file.path)], text: 'Savdo Hisoboti'));
       }
     } catch (e) {
       if (mounted) {
