@@ -189,42 +189,37 @@ class HomePage extends StatelessWidget {
               ],
             ),
             actions: [
-              // Switch role test badge
-              InkWell(
-                onTap: () => _showAccountSwitcher(context, session),
-                borderRadius: BorderRadius.circular(20),
-                child: Container(
-                  margin: const EdgeInsets.symmetric(vertical: 10),
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: isOwner
-                        ? Colors.blueAccent.withValues(alpha: 0.15)
-                        : Colors.orangeAccent.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: isOwner ? Colors.blueAccent : Colors.orangeAccent,
-                      width: 1,
-                    ),
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: isOwner
+                      ? Colors.blueAccent.withValues(alpha: 0.15)
+                      : Colors.orangeAccent.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: isOwner ? Colors.blueAccent : Colors.orangeAccent,
+                    width: 1,
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        isOwner ? Icons.admin_panel_settings : Icons.badge_outlined,
-                        size: 14,
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      isOwner ? Icons.admin_panel_settings : Icons.badge_outlined,
+                      size: 14,
+                      color: isOwner ? Colors.blueAccent : Colors.orangeAccent,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      isOwner ? 'staff.owner_short'.tr(context: context) : (currentEmp?.id ?? 'EMP'),
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
                         color: isOwner ? Colors.blueAccent : Colors.orangeAccent,
                       ),
-                      const SizedBox(width: 4),
-                      Text(
-                        isOwner ? 'staff.owner_short'.tr(context: context) : (currentEmp?.id ?? 'EMP'),
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                          color: isOwner ? Colors.blueAccent : Colors.orangeAccent,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(width: 8),
@@ -721,93 +716,6 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  void _showAccountSwitcher(BuildContext context, SessionManager session) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: AppColors.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'staff.switch_account'.tr(),
-                  style: const TextStyle(
-                    color: AppColors.textPrimary,
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                // Boss option
-                ListTile(
-                  leading: const CircleAvatar(
-                    backgroundColor: Colors.blueAccent,
-                    child: Icon(Icons.admin_panel_settings, color: Colors.white),
-                  ),
-                  title: Text(
-                    session.bossProfile.name,
-                    style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Text(
-                    'staff.role_owner'.tr(),
-                    style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
-                  ),
-                  trailing: session.currentRole == AppRole.owner
-                      ? const Icon(Icons.check_circle, color: Colors.blueAccent)
-                      : null,
-                  onTap: () {
-                    // Security check: Bossga o'tishda PIN kod yoki ogohlantirish talab qilinadi
-                    if (session.currentRole != AppRole.owner) {
-                       Navigator.pop(context); // close sheet
-                       ScaffoldMessenger.of(context).showSnackBar(
-                         SnackBar(content: Text('auth.switch_to_boss_pin_required'.tr())),
-                       );
-                    } else {
-                       Navigator.pop(context);
-                    }
-                  },
-                ),
-                const Divider(color: Colors.white10),
-                // Employees list
-                ...session.employees.map((emp) {
-                  final isCurrent = session.currentRole == AppRole.staff && session.currentEmployee?.id == emp.id;
-                  return ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: Colors.orangeAccent.withValues(alpha: 0.2),
-                      child: Text(
-                        emp.id.replaceFirst('EMP-', ''),
-                        style: const TextStyle(color: Colors.orangeAccent, fontWeight: FontWeight.bold, fontSize: 12),
-                      ),
-                    ),
-                    title: Text(
-                      emp.name,
-                      style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600),
-                    ),
-                    subtitle: Text(
-                      '${emp.id}  ${emp.roleName}',
-                      style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
-                    ),
-                    trailing: isCurrent ? const Icon(Icons.check_circle, color: Colors.orangeAccent) : null,
-                    onTap: () {
-                      session.switchToEmployee(emp.id);
-                      Navigator.pop(context);
-                    },
-                  );
-                }),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
 
   Widget _buildCustomDrawer(BuildContext context, SessionManager session) {
     final isOwner = session.currentRole == AppRole.owner;
@@ -854,14 +762,6 @@ class HomePage extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 16),
               children: [
-                _buildDrawerItem(Icons.sync_alt, 'staff.switch_account'.tr(), Colors.tealAccent, () {
-                  Navigator.pop(context);
-                  _showAccountSwitcher(context, session);
-                }),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Divider(color: Colors.white10, height: 1),
-                ),
                 if (isOwner || session.activeDepartment != Department.none)
                   _buildDrawerItem(Icons.smart_toy, 'dashboard.menu_ai'.tr(), Colors.deepPurpleAccent, () {
                     Navigator.pop(context);

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AiService {
   final String _apiKey = dotenv.env['DEEPSEEK_API_KEY'] ?? '';
@@ -10,7 +11,7 @@ class AiService {
   Future<String> sendMessage(List<Map<String, String>> messages) async {
     try {
       if (_apiKey.isEmpty) {
-        return "API kaliti topilmadi (.env faylini tekshiring).";
+        return 'ai_assistant.error_key_missing'.tr();
       }
 
       final response = await http.post(
@@ -29,11 +30,19 @@ class AiService {
       if (response.statusCode == 200) {
         final data = jsonDecode(utf8.decode(response.bodyBytes));
         return data['choices'][0]['message']['content'] ?? '';
+      } else if (response.statusCode == 402) {
+        return 'ai_assistant.error_402'.tr();
+      } else if (response.statusCode == 401) {
+        return 'ai_assistant.error_401'.tr();
+      } else if (response.statusCode == 429) {
+        return 'ai_assistant.error_429'.tr();
+      } else if (response.statusCode >= 500) {
+        return 'ai_assistant.error_server'.tr();
       } else {
-        return "Xatolik: ${response.statusCode}";
+        return '${"common.error".tr()} (${response.statusCode})';
       }
-    } catch (e) {
-      return "Tarmoq xatosi: $e";
+    } catch (_) {
+      return 'ai_assistant.error_network'.tr();
     }
   }
 }

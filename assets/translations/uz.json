@@ -100,7 +100,13 @@
     "command_low_stock": "Qaysi mahsulotlar kam qoldi?",
     "sample_low_stock_desc": "Minimal miqdordan kam qolgan tovarlarni aniqlash",
     "command_finance_sample": "Oylik tushum va foyda qanday?",
-    "sample_finance_desc": "Umumiy daromad, operatsion xarajat va foyda tahlili"
+    "sample_finance_desc": "Umumiy daromad, operatsion xarajat va foyda tahlili",
+    "error_402": "AI xizmatida hisob balansi tugagan. Iltimos, administratorga murojaat qiling.",
+    "error_401": "AI xizmati kaliti yaroqsiz yoki noto'g'ri sozlangan.",
+    "error_429": "So'rovlar soni me'yordan oshdi. Iltimos, birozdan so'ng qayta urinib ko'ring.",
+    "error_server": "AI serverida vaqtinchalik uzilish yuz berdi. Birozdan so'ng qayta urinib ko'ring.",
+    "error_network": "Internet aloqasi mavjud emas yoki juda sust. Iltimos, ulanishni tekshiring.",
+    "error_key_missing": "AI xizmati kaliti topilmadi (.env faylini tekshiring)."
   },
   "recipes": {
     "title": "TTK va Retseptlar",
@@ -494,5 +500,18 @@
     "success_added": "Stol(lar) muvaffaqiyatli qo'shildi!",
     "success_updated": "Stol ma'lumotlari yangilandi!",
     "success_deleted": "Stol o'chirildi!"
+  },
+  "errors": {
+    "network_error": "Internet tarmog'iga ulanish mavjud emas yoki sust",
+    "invalid_credentials": "Email yoki parol noto'g'ri kiritildi",
+    "email_not_confirmed": "Email manzili hali tasdiqlanmagan",
+    "user_exists": "Ushbu email bilan avval ro'yxatdan o'tilgan",
+    "weak_password": "Parol kamida 6 ta belgidan iborat bo'lishi kerak",
+    "server_error": "Serverda vaqtinchalik nosozlik yuz berdi. Qayta urinib ko'ring",
+    "unknown_error": "Kutilmagan xatolik yuz berdi",
+    "ai_balance_empty": "AI xizmati hisobida mablag' yetarli emas. Administratorga murojaat qiling",
+    "ai_key_invalid": "AI xizmati kaliti yaroqsiz yoki noto'g'ri sozlangan",
+    "ai_rate_limit": "So'rovlar soni me'yordan oshdi. Birozdan so'ng qayta urinib ko'ring",
+    "ai_server_down": "AI serverida vaqtinchalik uzilish yuz berdi"
   }
 }

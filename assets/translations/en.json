@@ -100,7 +100,13 @@
     "command_low_stock": "Which ingredients are running low?",
     "sample_low_stock_desc": "Items below minimum inventory stock",
     "command_finance_sample": "How is monthly revenue and profit?",
-    "sample_finance_desc": "Analysis of revenue, expenses and net profit"
+    "sample_finance_desc": "Analysis of revenue, expenses and net profit",
+    "error_402": "Insufficient AI service balance. Please contact administrator.",
+    "error_401": "Invalid API key for AI service.",
+    "error_429": "Rate limit exceeded. Please wait a moment.",
+    "error_server": "Temporary AI server outage. Please try again later.",
+    "error_network": "No internet connection or network is weak.",
+    "error_key_missing": "AI API key not found. Please check configuration."
   },
   "recipes": {
     "title": "TTK & Recipes",
@@ -494,5 +500,18 @@
     "success_added": "Table(s) added successfully!",
     "success_updated": "Table information updated!",
     "success_deleted": "Table deleted!"
+  },
+  "errors": {
+    "network_error": "No internet connection or network is weak",
+    "invalid_credentials": "Invalid email or password",
+    "email_not_confirmed": "Email address is not yet confirmed",
+    "user_exists": "A user with this email already exists",
+    "weak_password": "Password must be at least 6 characters",
+    "server_error": "Temporary server error. Please try again",
+    "unknown_error": "An unexpected error occurred",
+    "ai_balance_empty": "Insufficient AI service balance. Please contact administrator",
+    "ai_key_invalid": "Invalid API key for AI service",
+    "ai_rate_limit": "Rate limit exceeded. Please try again shortly",
+    "ai_server_down": "Temporary AI server outage"
   }
 }
