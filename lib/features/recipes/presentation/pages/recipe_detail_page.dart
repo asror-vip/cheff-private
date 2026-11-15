@@ -129,7 +129,12 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> with SingleTickerPr
 
                           if (source != null) {
                             final ImagePicker picker = ImagePicker();
-                            final XFile? image = await picker.pickImage(source: source);
+                            final XFile? image = await picker.pickImage(
+                              source: source,
+                              maxWidth: 1024,
+                              maxHeight: 1024,
+                              imageQuality: 80,
+                            );
                             if (image != null && context.mounted) {
                               context.read<RecipesProvider>().uploadRecipeImage(widget.recipe.id, image.path);
                             }
