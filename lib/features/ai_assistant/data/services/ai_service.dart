@@ -4,7 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AiService {
   final String _apiKey = dotenv.env['DEEPSEEK_API_KEY'] ?? '';
-  final String _model = dotenv.env['DEEPSEEK_MODEL'] ?? 'deepseek-flash';
+  final String _model = dotenv.env['DEEPSEEK_MODEL'] ?? 'deepseek-chat';
   final String _baseUrl = 'https://api.deepseek.com/chat/completions';
 
   Future<String> sendMessage(List<Map<String, String>> messages) async {
