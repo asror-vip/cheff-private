@@ -472,5 +472,27 @@
     "order": "Order",
     "items": "Items",
     "time_elapsed": "Time: {}"
+  },
+  "tables": {
+    "title": "Tables Management",
+    "add_table": "Add Table",
+    "edit_table": "Edit Table",
+    "delete_table": "Delete Table",
+    "single_add": "Single Table",
+    "batch_add": "Batch Add",
+    "table_name": "Table Name",
+    "table_name_hint": "e.g. Table 1 or VIP 1",
+    "zone": "Hall / Zone",
+    "zone_hint": "e.g. Main Hall, VIP, Terrace",
+    "capacity": "Capacity (seats)",
+    "start_number": "Starting Number",
+    "count": "Tables Count",
+    "prefix": "Prefix",
+    "prefix_hint": "e.g. Table or VIP",
+    "delete_confirm": "Are you sure you want to delete this table?",
+    "manage_tables": "Manage Tables",
+    "success_added": "Table(s) added successfully!",
+    "success_updated": "Table information updated!",
+    "success_deleted": "Table deleted!"
   }
 }

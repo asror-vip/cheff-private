@@ -472,5 +472,27 @@
     "order": "Buyurtma",
     "items": "Taomlar",
     "time_elapsed": "Vaqt: {}"
+  },
+  "tables": {
+    "title": "Stollar boshqaruvi",
+    "add_table": "Stol qo'shish",
+    "edit_table": "Stolni tahrirlash",
+    "delete_table": "Stolni o'chirish",
+    "single_add": "Yagona stol",
+    "batch_add": "Guruhlab qo'shish",
+    "table_name": "Stol nomi",
+    "table_name_hint": "Masalan: 1-stol yoki VIP 1",
+    "zone": "Zal / Zona",
+    "zone_hint": "Masalan: Asosiy zal, VIP, Terassa",
+    "capacity": "Sig'imi (o'rin soni)",
+    "start_number": "Boshlang'ich raqam",
+    "count": "Stollar soni",
+    "prefix": "Prefiks (old qo'shimcha)",
+    "prefix_hint": "Masalan: Stol yoki VIP",
+    "delete_confirm": "Haqiqatan ham ushbu stolni o'chirmoqchimisiz?",
+    "manage_tables": "Stollarni boshqarish",
+    "success_added": "Stol(lar) muvaffaqiyatli qo'shildi!",
+    "success_updated": "Stol ma'lumotlari yangilandi!",
+    "success_deleted": "Stol o'chirildi!"
   }
 }

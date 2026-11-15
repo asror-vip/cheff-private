@@ -67,6 +67,48 @@ class TablesProvider extends ChangeNotifier {
     await _repository.updateTableStatus(tableId, newStatus, orderId: orderId, waiterId: waiterId);
   }
 
+  Future<void> addTable({
+    required String name,
+    required String zone,
+    required int capacity,
+  }) async {
+    await _repository.addTable(name: name, zone: zone, capacity: capacity);
+  }
+
+  Future<void> addBatchTables({
+    required String zone,
+    required int startNumber,
+    required int count,
+    required int capacity,
+    String prefix = '',
+  }) async {
+    await _repository.addBatchTables(
+      zone: zone,
+      startNumber: startNumber,
+      count: count,
+      capacity: capacity,
+      prefix: prefix,
+    );
+  }
+
+  Future<void> updateTableDetails(
+    String tableId, {
+    required String name,
+    required String zone,
+    required int capacity,
+  }) async {
+    await _repository.updateTableDetails(
+      tableId,
+      name: name,
+      zone: zone,
+      capacity: capacity,
+    );
+  }
+
+  Future<void> deleteTable(String tableId) async {
+    await _repository.deleteTable(tableId);
+  }
+
   List<TableEntity> _getMockTables() {
     return [
       TableEntity(id: '1', restaurantId: '1', name: 'Stol 1', capacity: 4, zone: 'Zal 1'),

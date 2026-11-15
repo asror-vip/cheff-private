@@ -40,6 +40,70 @@ class TablesRepository {
     }
   }
 
+  Future<void> addTable({
+    required String name,
+    required String zone,
+    required int capacity,
+  }) async {
+    await _client.from('restaurant_tables').insert({
+      'restaurant_id': SupabaseService.currentRestaurantId,
+      'name': name,
+      'zone': zone,
+      'capacity': capacity,
+      'status': 'available',
+      'created_at': DateTime.now().toIso8601String(),
+      'updated_at': DateTime.now().toIso8601String(),
+    });
+  }
+
+  Future<void> addBatchTables({
+    required String zone,
+    required int startNumber,
+    required int count,
+    required int capacity,
+    String prefix = '',
+  }) async {
+    final List<Map<String, dynamic>> records = [];
+    final now = DateTime.now().toIso8601String();
+    final restId = SupabaseService.currentRestaurantId;
+
+    for (int i = 0; i < count; i++) {
+      final num = startNumber + i;
+      final name = prefix.trim().isEmpty ? '$num-stol' : '$prefix $num';
+      records.add({
+        'restaurant_id': restId,
+        'name': name,
+        'zone': zone,
+        'capacity': capacity,
+        'status': 'available',
+        'created_at': now,
+        'updated_at': now,
+      });
+    }
+
+    if (records.isNotEmpty) {
+      await _client.from('restaurant_tables').insert(records);
+    }
+  }
+
+  Future<void> updateTableDetails(
+    String tableId, {
+    required String name,
+    required String zone,
+    required int capacity,
+  }) async {
+    await _client.from('restaurant_tables').update({
+      'name': name,
+      'zone': zone,
+      'capacity': capacity,
+      'updated_at': DateTime.now().toIso8601String(),
+    }).eq('id', tableId);
+  }
+
+  Future<void> deleteTable(String tableId) async {
+    await _client.from('restaurant_tables').delete().eq('id', tableId);
+  }
+
   TableEntity _fromMap(Map<String, dynamic> map) {
     String statusStr = map['status'] ?? 'available';
     TableStatus ts = TableStatus.available;
