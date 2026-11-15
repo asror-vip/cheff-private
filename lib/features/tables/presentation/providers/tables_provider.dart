@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../domain/entities/table_entity.dart';
 import '../../data/repositories/tables_repository.dart';
-import '../../../../core/session/session_manager.dart';
 
 class TablesProvider extends ChangeNotifier {
   final TablesRepository _repository = TablesRepository();
@@ -18,15 +17,10 @@ class TablesProvider extends ChangeNotifier {
   TablesProvider() {
     _subscription = _repository.streamTables().listen((data) {
       _tables = data;
-      if (_tables.isEmpty) {
-        _tables = _getMockTables();
-      }
       notifyListeners();
     }, onError: (err) {
-      if (_tables.isEmpty) {
-         _tables = _getMockTables();
-         notifyListeners();
-      }
+      debugPrint('Error streaming tables: $err');
+      notifyListeners();
     });
   }
 
@@ -109,16 +103,5 @@ class TablesProvider extends ChangeNotifier {
     await _repository.deleteTable(tableId);
   }
 
-  List<TableEntity> _getMockTables() {
-    return [
-      TableEntity(id: '1', restaurantId: '1', name: 'Stol 1', capacity: 4, zone: 'Zal 1'),
-      TableEntity(id: '2', restaurantId: '1', name: 'Stol 2', capacity: 2, zone: 'Zal 1', status: TableStatus.occupied, currentOrderId: 'ord_01', assignedWaiterId: SessionManager().currentEmployee?.id),
-      TableEntity(id: '3', restaurantId: '1', name: 'Stol 3', capacity: 6, zone: 'Zal 1'),
-      TableEntity(id: '4', restaurantId: '1', name: 'Stol 4', capacity: 4, zone: 'Zal 1', status: TableStatus.billRequested),
-      TableEntity(id: '5', restaurantId: '1', name: 'VIP 1', capacity: 8, zone: 'VIP'),
-      TableEntity(id: '6', restaurantId: '1', name: 'VIP 2', capacity: 10, zone: 'VIP', status: TableStatus.occupied, currentOrderId: 'ord_02'),
-      TableEntity(id: '7', restaurantId: '1', name: 'Terassa 1', capacity: 4, zone: 'Terassa'),
-      TableEntity(id: '8', restaurantId: '1', name: 'Terassa 2', capacity: 4, zone: 'Terassa', status: TableStatus.cleaning),
-    ];
-  }
+
 }

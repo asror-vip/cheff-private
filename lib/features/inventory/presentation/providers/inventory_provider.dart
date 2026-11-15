@@ -28,11 +28,7 @@ class InventoryProvider extends ChangeNotifier {
     
     try {
       final data = await _repository.getProducts();
-      if (data.isEmpty) {
-        _items = _getMockInventory();
-      } else {
-        _items = data;
-      }
+      _items = data;
     } catch (e) {
       _error = e.toString();
     }
@@ -157,53 +153,5 @@ class InventoryProvider extends ChangeNotifier {
     }
   }
 
-  List<InventoryItem> _getMockInventory() {
-    return [
-      InventoryItem(
-        id: '1',
-        name: 'Mol go\'shti (Ribay)',
-        category: 'Go\'sht',
-        quantity: 12.5,
-        unit: 'kg',
-        totalValue: 1125000,
-        isLowStock: false,
-      ),
-      InventoryItem(
-        id: '2',
-        name: 'Qaymoq 33%',
-        category: 'Sut mahsulotlari',
-        quantity: 5.0,
-        unit: 'litr',
-        totalValue: 225000,
-        isLowStock: true,
-      ),
-      InventoryItem(
-        id: '3',
-        name: 'Cherri pomidor',
-        category: 'Sabzavotlar',
-        quantity: 3.2,
-        unit: 'kg',
-        totalValue: 112000,
-        isLowStock: true,
-      ),
-      InventoryItem(
-        id: '4',
-        name: 'Bug\'doy uni',
-        category: 'Quruq mahsulotlar',
-        quantity: 50.0,
-        unit: 'kg',
-        totalValue: 400000,
-        isLowStock: false,
-      ),
-      InventoryItem(
-        id: '5',
-        name: 'Zaytun moyi',
-        category: 'Yog\'lar',
-        quantity: 4.5,
-        unit: 'litr',
-        totalValue: 540000,
-        isLowStock: true,
-      ),
-    ];
-  }
+
 }

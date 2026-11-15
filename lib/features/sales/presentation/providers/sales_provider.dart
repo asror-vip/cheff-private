@@ -25,11 +25,7 @@ class SalesProvider extends ChangeNotifier {
     
     try {
       final data = await _repository.getTodaySalesSummary();
-      if (data.totalReceipts == 0) {
-        _summary = _getMockSummary();
-      } else {
-        _summary = data;
-      }
+      _summary = data;
     } catch (e) {
       _error = e.toString();
     }
@@ -59,17 +55,5 @@ class SalesProvider extends ChangeNotifier {
     }
   }
 
-  SalesSummary _getMockSummary() {
-    return SalesSummary(
-      totalRevenue: 1250000,
-      previousRevenue: 1086956, // to get +15%
-      totalReceipts: 45,
-      averageReceipt: 27000,
-      topDishes: [
-        TopDish(name: 'Pasta Karbonara', portions: 15, sum: 225000),
-        TopDish(name: 'Steyk Ribay', portions: 8, sum: 960000),
-        TopDish(name: 'Salat Sezar', portions: 12, sum: 144000),
-      ]
-    );
-  }
+
 }

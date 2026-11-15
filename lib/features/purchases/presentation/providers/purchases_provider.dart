@@ -27,11 +27,7 @@ class PurchasesProvider extends ChangeNotifier {
     
     try {
       final data = await _repository.getPurchases();
-      if (data.isEmpty) {
-        _orders = _getMockOrders();
-      } else {
-        _orders = data;
-      }
+      _orders = data;
     } catch (e) {
       _error = e.toString();
     }
@@ -104,34 +100,7 @@ class PurchasesProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<PurchaseOrder> _getMockOrders() {
-    return [
-      PurchaseOrder(
-        id: '1',
-        supplierName: 'MChJ "Baraka Savdo"',
-        date: '2023-10-25',
-        totalAmount: 1250000,
-        status: OrderStatus.delivered,
-        itemsCount: 15,
-      ),
-      PurchaseOrder(
-        id: '2',
-        supplierName: 'AgroFarm',
-        date: '2023-10-26',
-        totalAmount: 840000,
-        status: OrderStatus.active,
-        itemsCount: 8,
-      ),
-      PurchaseOrder(
-        id: '3',
-        supplierName: 'Green World',
-        date: '2023-10-27',
-        totalAmount: 450000,
-        status: OrderStatus.active,
-        itemsCount: 5,
-      ),
-    ];
-  }
+
   Future<void> saveAIPurchase(List<Map<String, dynamic>> items, {File? imageFile, String? existingPurchaseId}) async {
     _isLoading = true;
     notifyListeners();

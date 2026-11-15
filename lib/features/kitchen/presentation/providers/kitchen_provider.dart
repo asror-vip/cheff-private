@@ -32,15 +32,10 @@ class KitchenProvider extends ChangeNotifier {
     _subscription?.cancel();
     _subscription = _repository.streamKitchenItems(_currentStation).listen((data) {
       _items = data;
-      if (_items.isEmpty) {
-        _items = _getMockItems();
-      }
       notifyListeners();
     }, onError: (err) {
-       if (_items.isEmpty) {
-        _items = _getMockItems();
-        notifyListeners();
-      }
+      debugPrint('Error streaming kitchen items: $err');
+      notifyListeners();
     });
   }
 
@@ -77,24 +72,5 @@ class KitchenProvider extends ChangeNotifier {
     await _repository.rejectItem(itemId, reason);
   }
 
-  List<KitchenItemEntity> _getMockItems() {
-    final now = DateTime.now();
-    return [
-      KitchenItemEntity(
-        id: '1', orderId: 'ord1', recipeId: 'r1', name: 'Ribay Steyk', quantity: 2, 
-        status: OrderItemStatus.sent, comment: 'Yaxshi pishsin', station: 'hot_kitchen', 
-        createdAt: now.subtract(const Duration(minutes: 5)), tableName: 'Stol 5', assignedWaiterId: 'w1', orderNumber: '101'
-      ),
-      KitchenItemEntity(
-        id: '2', orderId: 'ord1', recipeId: 'r2', name: 'Moxito', quantity: 1, 
-        status: OrderItemStatus.cooking, comment: 'Muzsiz', station: 'hot_kitchen', 
-        createdAt: now.subtract(const Duration(minutes: 12)), tableName: 'Stol 5', assignedWaiterId: 'w1', orderNumber: '101'
-      ),
-      KitchenItemEntity(
-        id: '3', orderId: 'ord2', recipeId: 'r3', name: 'Tovuqli Sho\'rva', quantity: 1, 
-        status: OrderItemStatus.ready, comment: '', station: 'hot_kitchen', 
-        createdAt: now.subtract(const Duration(minutes: 18)), tableName: 'Terassa 1', assignedWaiterId: 'w2', orderNumber: '102'
-      ),
-    ];
-  }
+
 }

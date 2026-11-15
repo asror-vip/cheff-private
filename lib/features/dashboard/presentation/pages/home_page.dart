@@ -763,7 +763,7 @@ class HomePage extends StatelessWidget {
                       ? const Icon(Icons.check_circle, color: Colors.blueAccent)
                       : null,
                   onTap: () {
-                    // Security fix: Bossga o'tishda PIN kod yoki ogohlantirish (mock holati uchun shunchaki so'rov)
+                    // Security check: Bossga o'tishda PIN kod yoki ogohlantirish talab qilinadi
                     if (session.currentRole != AppRole.owner) {
                        Navigator.pop(context); // close sheet
                        ScaffoldMessenger.of(context).showSnackBar(

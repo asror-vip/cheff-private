@@ -217,14 +217,20 @@ class SessionManager extends ChangeNotifier {
   void _syncEmployeeToSupabase(EmployeeProfile emp) {
     try {
       final client = Supabase.instance.client;
-      client.from('users').upsert({
-        'id': emp.id,
+      final isUuid = RegExp(r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$').hasMatch(emp.id);
+      final payload = <String, dynamic>{
         'restaurant_id': _bossProfile.restaurantId,
         'name': emp.name,
+        'full_name': emp.name,
         'role': emp.roleName,
         'department': emp.assignedDepartment.name,
         'status': emp.status,
-      }).catchError((e) {
+        'employee_code': emp.id,
+      };
+      if (isUuid) {
+        payload['id'] = emp.id;
+      }
+      client.from('users').upsert(payload).catchError((e) {
         debugPrint('Supabase employee sync error: $e');
       });
     } catch (_) {}
