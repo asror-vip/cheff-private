@@ -10,19 +10,23 @@ import '../widgets/ai_voice_record_bar.dart';
 import '../widgets/quick_voice_sheet.dart';
 
 class AiAssistantPage extends StatelessWidget {
-  const AiAssistantPage({super.key});
+  final VoidCallback? onBack;
+
+  const AiAssistantPage({super.key, this.onBack});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => AiAssistantProvider(),
-      child: const AiAssistantView(),
+      child: AiAssistantView(onBack: onBack),
     );
   }
 }
 
 class AiAssistantView extends StatefulWidget {
-  const AiAssistantView({super.key});
+  final VoidCallback? onBack;
+
+  const AiAssistantView({super.key, this.onBack});
 
   @override
   State<AiAssistantView> createState() => _AiAssistantViewState();
@@ -107,7 +111,13 @@ class _AiAssistantViewState extends State<AiAssistantView> {
         leadingWidth: 40,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {
+            if (Navigator.of(context).canPop()) {
+              Navigator.of(context).pop();
+            } else if (widget.onBack != null) {
+              widget.onBack!();
+            }
+          },
         ),
         titleSpacing: 0,
         title: Row(

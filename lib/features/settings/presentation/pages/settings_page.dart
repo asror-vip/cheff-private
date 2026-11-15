@@ -15,8 +15,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatelessWidget {
   final VoidCallback? onOpenStaff;
+  final VoidCallback? onBack;
 
-  const SettingsPage({super.key, this.onOpenStaff});
+  const SettingsPage({super.key, this.onOpenStaff, this.onBack});
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +40,13 @@ class SettingsPage extends StatelessWidget {
                 elevation: 0,
                 leading: IconButton(
                   icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () {
+                    if (Navigator.of(context).canPop()) {
+                      Navigator.of(context).pop();
+                    } else if (onBack != null) {
+                      onBack!();
+                    }
+                  },
                 ),
                 title: Text(
                   'dashboard.menu_settings'.tr(),

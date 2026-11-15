@@ -34,13 +34,27 @@ class _MainLayoutState extends State<MainLayout> {
       HomePage(key: ValueKey('home_${currentLocale.toString()}')),
       GlobalSearchPage(key: ValueKey('search_${currentLocale.toString()}')),
       const SizedBox(), // Placeholder for FAB
-      AiAssistantPage(key: ValueKey('ai_${currentLocale.toString()}')),
-      SettingsPage(key: ValueKey('settings_${currentLocale.toString()}')),
+      AiAssistantPage(
+        key: ValueKey('ai_${currentLocale.toString()}'),
+        onBack: () => _onTabTapped(0),
+      ),
+      SettingsPage(
+        key: ValueKey('settings_${currentLocale.toString()}'),
+        onBack: () => _onTabTapped(0),
+      ),
     ];
 
-    return ListenableBuilder(
-      listenable: SessionManager(),
-      builder: (context, _) {
+    return PopScope(
+      canPop: _currentIndex == 0,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        if (_currentIndex != 0) {
+          _onTabTapped(0);
+        }
+      },
+      child: ListenableBuilder(
+        listenable: SessionManager(),
+        builder: (context, _) {
         final session = SessionManager();
         final canAccessPos = session.currentRole == AppRole.owner
             ? !session.isDepartmentDelegated(Department.pos)
@@ -89,8 +103,9 @@ class _MainLayoutState extends State<MainLayout> {
                 ),
         );
       },
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildNavItem({required IconData icon, required String label, required int index}) {
     final isSelected = _currentIndex == index;
