@@ -89,14 +89,9 @@ class _ShiftPageState extends State<ShiftPage> {
             keyboardType: TextInputType.number,
             style: const TextStyle(color: AppColors.textPrimary, fontSize: 20, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: AppColors.surface,
+            decoration: const InputDecoration(
               hintText: '0',
-              hintStyle: const TextStyle(color: AppColors.textSecondary),
               suffixText: 'so\'m',
-              suffixStyle: const TextStyle(color: AppColors.textSecondary),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
             ),
           ),
           const SizedBox(height: 32),
@@ -184,12 +179,8 @@ class _ShiftPageState extends State<ShiftPage> {
           TextField(
             controller: _noteController,
             style: const TextStyle(color: AppColors.textPrimary),
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: AppColors.surface,
+            decoration: const InputDecoration(
               hintText: 'Izoh (Ixtiyoriy, masalan kamomad bo\'lsa)',
-              hintStyle: const TextStyle(color: AppColors.textSecondary),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
             ),
           ),
 

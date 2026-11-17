@@ -39,6 +39,7 @@ class _AiVoiceRecordBarState extends State<AiVoiceRecordBar>
   int _recordSeconds = 0;
   Timer? _recordTimer;
   late AnimationController _pulseController;
+  final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
@@ -86,6 +87,7 @@ class _AiVoiceRecordBarState extends State<AiVoiceRecordBar>
     widget.controller.removeListener(_onTextChanged);
     _recordTimer?.cancel();
     _pulseController.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -100,16 +102,19 @@ class _AiVoiceRecordBarState extends State<AiVoiceRecordBar>
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-      decoration: const BoxDecoration(
-        color: Color(0xFF17212B),
-        border: Border(top: BorderSide(color: Colors.white10)),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        border: Border(
+          top: BorderSide(
+            color: Colors.white.withValues(alpha: 0.08),
+            width: 1,
+          ),
+        ),
       ),
       child: SafeArea(
         top: false,
-        child: widget.isListening
-            ? _buildRecordingBar()
-            : _buildInputBar(),
+        child: widget.isListening ? _buildRecordingBar() : _buildInputBar(),
       ),
     );
   }
@@ -124,24 +129,32 @@ class _AiVoiceRecordBarState extends State<AiVoiceRecordBar>
           animation: _pulseController,
           builder: (context, child) {
             return Container(
-              width: 12,
-              height: 12,
+              width: 14,
+              height: 14,
               decoration: BoxDecoration(
                 color: Colors.redAccent.withValues(
-                  alpha: 0.5 + (_pulseController.value * 0.5),
+                  alpha: 0.4 + (_pulseController.value * 0.6),
                 ),
                 shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.redAccent.withValues(alpha: 0.4 * _pulseController.value),
+                    blurRadius: 8,
+                    spreadRadius: 2,
+                  ),
+                ],
               ),
             );
           },
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 10),
         Text(
           '$minutes:$seconds',
           style: const TextStyle(
             color: Colors.white,
-            fontSize: 14,
+            fontSize: 15,
             fontWeight: FontWeight.bold,
+            letterSpacing: 0.5,
           ),
         ),
         const SizedBox(width: 14),
@@ -149,9 +162,9 @@ class _AiVoiceRecordBarState extends State<AiVoiceRecordBar>
           child: Row(
             children: [
               const Icon(
-                Icons.chevron_left,
+                Icons.chevron_left_rounded,
                 color: AppColors.textSecondary,
-                size: 18,
+                size: 20,
               ),
               Expanded(
                 child: Text(
@@ -160,7 +173,7 @@ class _AiVoiceRecordBarState extends State<AiVoiceRecordBar>
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     color: AppColors.textSecondary,
-                    fontSize: 12,
+                    fontSize: 13,
                   ),
                 ),
               ),
@@ -168,26 +181,46 @@ class _AiVoiceRecordBarState extends State<AiVoiceRecordBar>
           ),
         ),
         IconButton(
-          icon: const Icon(Icons.close, color: Colors.redAccent),
+          tooltip: 'common.cancel'.tr(),
+          icon: Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: Colors.redAccent.withValues(alpha: 0.15),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.close_rounded, color: Colors.redAccent, size: 20),
+          ),
           onPressed: () {
             HapticFeedback.mediumImpact();
             widget.onCancelRecording();
           },
         ),
+        const SizedBox(width: 4),
         GestureDetector(
           onTap: () {
             HapticFeedback.lightImpact();
             widget.onStopRecording();
           },
           child: Container(
-            width: 44,
-            height: 44,
-            decoration: const BoxDecoration(
-              color: Color(0xFF246BFD),
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF246BFD), Color(0xFF00C6FF)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
               shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF246BFD).withValues(alpha: 0.4),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
             child: const Icon(
-              Icons.send,
+              Icons.send_rounded,
               color: Colors.white,
               size: 20,
             ),
@@ -199,93 +232,182 @@ class _AiVoiceRecordBarState extends State<AiVoiceRecordBar>
 
   Widget _buildInputBar() {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        IconButton(
-          icon: const Icon(Icons.bolt, color: Colors.amber, size: 24),
-          tooltip: 'ai_assistant.quick_commands'.tr(),
-          onPressed: widget.onOpenQuickPresets,
+        // Quick presets button (bolt)
+        Padding(
+          padding: const EdgeInsets.only(bottom: 2),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(22),
+              onTap: widget.onOpenQuickPresets,
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Colors.amber.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: Colors.amber.withValues(alpha: 0.25),
+                    width: 1,
+                  ),
+                ),
+                child: const Icon(
+                  Icons.bolt_rounded,
+                  color: Colors.amber,
+                  size: 22,
+                ),
+              ),
+            ),
+          ),
         ),
+        const SizedBox(width: 8),
+
+        // Text input field
         Expanded(
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14),
+            constraints: const BoxConstraints(maxHeight: 120),
             decoration: BoxDecoration(
-              color: const Color(0xFF242F3D),
+              color: AppColors.surfaceLight,
               borderRadius: BorderRadius.circular(22),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.1),
+                width: 1,
+              ),
             ),
             child: TextField(
               controller: widget.controller,
-              maxLines: 4,
+              focusNode: _focusNode,
+              maxLines: null,
               minLines: 1,
-              style: const TextStyle(color: Colors.white, fontSize: 15),
+              keyboardType: TextInputType.multiline,
+              textCapitalization: TextCapitalization.sentences,
+              style: const TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: 15,
+                height: 1.3,
+              ),
+              cursorColor: AppColors.primary,
               decoration: InputDecoration(
-                hintText: 'ai_assistant.input_hint'.tr(),
-                hintStyle: const TextStyle(color: Colors.white38, fontSize: 14),
-                border: InputBorder.none,
                 isDense: true,
-                contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                filled: false,
+                fillColor: Colors.transparent,
+                hintText: 'ai_assistant.input_hint'.tr(),
+                hintStyle: const TextStyle(
+                  color: AppColors.textMuted,
+                  fontSize: 14,
+                ),
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                errorBorder: InputBorder.none,
+                disabledBorder: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
               ),
               onSubmitted: (_) => _handleSend(),
             ),
           ),
         ),
         const SizedBox(width: 8),
-        _hasText
-            ? GestureDetector(
-                onTap: widget.isLoading ? null : _handleSend,
-                child: Container(
-                  width: 42,
-                  height: 42,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF246BFD),
-                    shape: BoxShape.circle,
-                  ),
-                  child: widget.isLoading
-                      ? const Padding(
-                          padding: EdgeInsets.all(10),
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
+
+        // Send or Mic button
+        Padding(
+          padding: const EdgeInsets.only(bottom: 2),
+          child: _hasText
+              ? Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(22),
+                    onTap: widget.isLoading ? null : _handleSend,
+                    child: Container(
+                      width: 42,
+                      height: 42,
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF246BFD), Color(0xFF00C6FF)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF246BFD).withValues(alpha: 0.4),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
                           ),
-                        )
-                      : const Icon(Icons.send, color: Colors.white, size: 20),
-                ),
-              )
-            : GestureDetector(
-                onLongPressStart: (_) {
-                  HapticFeedback.heavyImpact();
-                  widget.onStartRecording();
-                },
-                onLongPressMoveUpdate: (details) {
-                  _dragOffset += details.offsetFromOrigin.dx;
-                  if (_dragOffset < -70) {
-                    HapticFeedback.mediumImpact();
-                    widget.onCancelRecording();
-                  }
-                },
-                onLongPressEnd: (_) {
-                  if (_dragOffset >= -70) {
+                        ],
+                      ),
+                      child: widget.isLoading
+                          ? const Center(
+                              child: SizedBox(
+                                width: 18,
+                                height: 18,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            )
+                          : const Icon(
+                              Icons.send_rounded,
+                              color: Colors.white,
+                              size: 19,
+                            ),
+                    ),
+                  ),
+                )
+              : GestureDetector(
+                  onLongPressStart: (_) {
+                    HapticFeedback.heavyImpact();
+                    widget.onStartRecording();
+                  },
+                  onLongPressMoveUpdate: (details) {
+                    _dragOffset += details.offsetFromOrigin.dx;
+                    if (_dragOffset < -70) {
+                      HapticFeedback.mediumImpact();
+                      widget.onCancelRecording();
+                    }
+                  },
+                  onLongPressEnd: (_) {
+                    if (_dragOffset >= -70) {
+                      HapticFeedback.lightImpact();
+                      widget.onStopRecording();
+                    }
+                  },
+                  onTap: () {
                     HapticFeedback.lightImpact();
-                    widget.onStopRecording();
-                  }
-                },
-                onTap: () {
-                  HapticFeedback.lightImpact();
-                  widget.onStartRecording();
-                },
-                child: Container(
-                  width: 42,
-                  height: 42,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF246BFD),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.mic,
-                    color: Colors.white,
-                    size: 22,
+                    widget.onStartRecording();
+                  },
+                  child: Container(
+                    width: 42,
+                    height: 42,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF246BFD), Color(0xFF00C6FF)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF246BFD).withValues(alpha: 0.35),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.mic_rounded,
+                      color: Colors.white,
+                      size: 22,
+                    ),
                   ),
                 ),
-              ),
+        ),
       ],
     );
   }

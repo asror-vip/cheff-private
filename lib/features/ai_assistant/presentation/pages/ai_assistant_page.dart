@@ -104,10 +104,18 @@ class _AiAssistantViewState extends State<AiAssistantView> {
     WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F1621),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF17212B),
-        elevation: 1,
+        backgroundColor: AppColors.surface,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(
+            color: Colors.white.withValues(alpha: 0.08),
+            height: 1,
+          ),
+        ),
         leadingWidth: 40,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
@@ -311,11 +319,11 @@ class _AiAssistantViewState extends State<AiAssistantView> {
         margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: const Color(0xFF1E2633),
+          color: AppColors.surfaceLight,
           borderRadius: BorderRadius.circular(16).copyWith(
             bottomLeft: const Radius.circular(3),
           ),
-          border: Border.all(color: Colors.white10, width: 0.5),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

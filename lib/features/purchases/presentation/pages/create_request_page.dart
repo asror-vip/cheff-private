@@ -191,10 +191,6 @@ class _CreateRequestPageState extends State<CreateRequestPage> {
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     hintText: 'purchases.product_name_hint'.tr(),
-                    hintStyle: const TextStyle(color: Colors.white54),
-                    filled: true,
-                    fillColor: AppColors.surface,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
                     suffixIcon: const Icon(Icons.search, color: Colors.white54),
                   ),
                 ),
@@ -212,10 +208,6 @@ class _CreateRequestPageState extends State<CreateRequestPage> {
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
                       hintText: 'purchases.quantity'.tr(),
-                      hintStyle: const TextStyle(color: Colors.white54),
-                      filled: true,
-                      fillColor: AppColors.surface,
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
                     ),
                   ),
                 ),
@@ -417,10 +409,6 @@ class _SupplierSelectionSheetState extends State<_SupplierSelectionSheet> {
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
                       hintText: '@username',
-                      hintStyle: const TextStyle(color: Colors.white38),
-                      filled: true,
-                      fillColor: AppColors.background,
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
                       suffixIcon: searchStatus == 'loading' 
                           ? const Padding(
                               padding: EdgeInsets.all(12.0),
