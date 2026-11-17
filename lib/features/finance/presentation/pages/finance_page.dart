@@ -35,8 +35,9 @@ class _FinancePageState extends State<FinancePage> {
         title: Text('finance.title'.tr(), style: const TextStyle(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold)),
         actions: [
           IconButton(
-            icon: const Icon(Icons.more_vert, color: AppColors.textPrimary),
-            onPressed: () {},
+            icon: const Icon(Icons.refresh_rounded, color: AppColors.textPrimary),
+            tooltip: 'common.refresh'.tr(),
+            onPressed: () => context.read<FinanceProvider>().fetchFinance(),
           )
         ],
       ),

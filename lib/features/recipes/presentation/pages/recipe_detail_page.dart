@@ -43,12 +43,6 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> with SingleTickerPr
         title: const Text(''),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.more_vert),
-            onPressed: () {},
-          )
-        ],
       ),
       body: Consumer<RecipesProvider>(
         builder: (context, provider, child) {

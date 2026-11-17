@@ -23,6 +23,25 @@ class ToastUtils {
     );
   }
 
+  static void showInfo(BuildContext context, String message) {
+    toastification.show(
+      context: context,
+      type: ToastificationType.info,
+      style: ToastificationStyle.flat,
+      title: Text(message, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blueAccent)),
+      alignment: Alignment.topRight,
+      autoCloseDuration: const Duration(seconds: 4),
+      showProgressBar: true,
+      closeButton: const ToastCloseButton(),
+      dragToClose: true,
+      backgroundColor: AppColors.surface,
+      primaryColor: Colors.blueAccent,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      borderRadius: BorderRadius.circular(12),
+      boxShadow: highModeShadow,
+    );
+  }
+
   static void showError(BuildContext context, String error) {
     final String cleanError = cleanErrorMessage(error);
 

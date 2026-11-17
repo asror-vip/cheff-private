@@ -185,8 +185,51 @@ class SessionManager extends ChangeNotifier {
         _isLoggedIn = isLoggedInPref;
       }
       notifyListeners();
+      fetchEmployeesFromSupabase();
     } catch (e) {
       debugPrint('Error initializing session: $e');
+    }
+  }
+
+  Future<void> fetchEmployeesFromSupabase() async {
+    try {
+      final client = Supabase.instance.client;
+      final restId = _bossProfile.restaurantId;
+      final response = await client
+          .from('users')
+          .select()
+          .eq('restaurant_id', restId);
+          
+      if (response.isNotEmpty) {
+        final list = <EmployeeProfile>[];
+        for (final row in response) {
+          final role = (row['role'] ?? 'Xodim').toString();
+          if (role.toLowerCase() == 'owner' || role.toLowerCase() == 'boss') {
+            continue;
+          }
+          final id = (row['employee_code'] ?? row['id'] ?? '').toString();
+          final name = (row['full_name'] ?? row['name'] ?? 'Xodim').toString();
+          final deptStr = (row['department'] ?? 'none').toString();
+          final status = (row['status'] ?? 'active').toString();
+          
+          list.add(EmployeeProfile(
+            id: id,
+            name: name,
+            assignedDepartment: Department.values.firstWhere(
+              (d) => d.name == deptStr,
+              orElse: () => Department.none,
+            ),
+            status: status,
+            roleName: role,
+          ));
+        }
+        _employees.clear();
+        _employees.addAll(list);
+        await _saveEmployees();
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint('Error fetching employees from Supabase: $e');
     }
   }
 
@@ -339,21 +382,79 @@ class SessionManager extends ChangeNotifier {
     }
   }
 
-  EmployeeProfile registerNewEmployee({required String name}) {
+  EmployeeProfile registerNewEmployee({
+    required String name,
+    String? roleName,
+    Department? department,
+  }) {
     final nextIdNum = 100 + _employees.length + 1;
     final newId = 'EMP-$nextIdNum';
+    final dept = department ?? Department.none;
     final newEmp = EmployeeProfile(
       id: newId,
       name: name,
-      assignedDepartment: Department.none,
-      status: 'waiting',
-      roleName: 'Yangi xodim',
+      assignedDepartment: dept,
+      status: dept == Department.none ? 'waiting' : 'active',
+      roleName: roleName ?? (dept == Department.none ? 'Yangi xodim' : 'Xodim'),
     );
     _employees.add(newEmp);
     _saveEmployees();
     _syncEmployeeToSupabase(newEmp);
     notifyListeners();
     return newEmp;
+  }
+
+  Future<void> updateEmployee({
+    required String id,
+    required String name,
+    required String roleName,
+    required Department department,
+    String? status,
+  }) async {
+    final index = _employees.indexWhere((e) => e.id == id);
+    if (index != -1) {
+      final updated = _employees[index].copyWith(
+        name: name,
+        roleName: roleName,
+        assignedDepartment: department,
+        status: status ?? _employees[index].status,
+      );
+      _employees[index] = updated;
+      if (_currentEmployee?.id == id) {
+        _currentEmployee = updated;
+      }
+      await _saveEmployees();
+      _syncEmployeeToSupabase(updated);
+      notifyListeners();
+    }
+  }
+
+  Future<void> deleteEmployee(String id) async {
+    _employees.removeWhere((e) => e.id == id);
+    if (_currentEmployee?.id == id) {
+      _currentEmployee = null;
+    }
+    await _saveEmployees();
+    notifyListeners();
+    try {
+      final client = Supabase.instance.client;
+      await client.from('users').delete().eq('employee_code', id);
+    } catch (e) {
+      debugPrint('Error deleting employee from Supabase: $e');
+    }
+  }
+
+  Future<void> toggleEmployeeStatus(String id) async {
+    final index = _employees.indexWhere((e) => e.id == id);
+    if (index != -1) {
+      final current = _employees[index];
+      final newStatus = current.status == 'active' ? 'waiting' : 'active';
+      final updated = current.copyWith(status: newStatus);
+      _employees[index] = updated;
+      await _saveEmployees();
+      _syncEmployeeToSupabase(updated);
+      notifyListeners();
+    }
   }
 
   void updateBossProfile({
@@ -379,7 +480,10 @@ class SessionManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  String getInviteLink(String employeeId) {
-    return 'https://chefcontrol.ai/join?code=$employeeId&rest=${_bossProfile.restaurantId}';
+  String getInviteLink([String? employeeId]) {
+    if (employeeId != null && employeeId.isNotEmpty) {
+      return 'https://chefcontrol.ai/join?code=$employeeId&rest=${_bossProfile.restaurantId}';
+    }
+    return 'https://chefcontrol.ai/join?rest=${_bossProfile.restaurantId}';
   }
 }

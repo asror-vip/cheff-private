@@ -26,13 +26,13 @@ class AuditEntry {
   factory AuditEntry.fromJson(Map<String, dynamic> json) {
     final payload = (json['payload'] as Map<String, dynamic>?) ?? {};
     return AuditEntry(
-      id: json['id'] ?? '',
-      employeeId: payload['employee_id'] ?? 'EMP-101',
-      employeeName: payload['employee_name'] ?? 'Noma`lum xodim',
-      department: payload['department'] ?? json['event_type'] ?? 'general',
-      action: payload['action'] ?? json['event_type'] ?? '',
-      details: payload['details'] ?? '',
-      timestamp: DateTime.tryParse(json['created_at'] ?? '') ?? DateTime.now(),
+      id: json['id']?.toString() ?? '',
+      employeeId: payload['employee_id']?.toString() ?? '',
+      employeeName: payload['employee_name']?.toString() ?? 'Noma`lum xodim',
+      department: payload['department']?.toString() ?? json['event_type']?.toString() ?? 'general',
+      action: payload['action']?.toString() ?? json['event_type']?.toString() ?? '',
+      details: payload['details']?.toString() ?? '',
+      timestamp: DateTime.tryParse(json['created_at']?.toString() ?? '') ?? DateTime.now(),
       extraData: payload,
     );
   }
@@ -42,64 +42,38 @@ class AuditService extends ChangeNotifier {
   static final AuditService _instance = AuditService._internal();
   factory AuditService() => _instance;
   AuditService._internal() {
-    _initSeedData();
+    fetchEvents();
   }
 
   final List<AuditEntry> _entries = [];
   List<AuditEntry> get entries => List.unmodifiable(_entries);
 
-  final bool _isLoading = false;
+  bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  void _initSeedData() {
-    final now = DateTime.now();
-    _entries.addAll([
-      AuditEntry(
-        id: 'aud-1',
-        employeeId: 'EMP-101',
-        employeeName: 'Bobur Aliyev',
-        department: 'warehouse',
-        action: 'Ombor kirimi',
-        details: 'Mol go`shti (lahm) - 25 kg kirim qilindi. Yetkazib beruvchi: Go`sht Savdo MCHJ.',
-        timestamp: DateTime(now.year, now.month, now.day, 9, 15),
-      ),
-      AuditEntry(
-        id: 'aud-2',
-        employeeId: 'EMP-102',
-        employeeName: 'Malika Karimova',
-        department: 'pos',
-        action: 'POS Savdo cheki',
-        details: 'Chek #1001 yopildi. Jami: 185 000 so`m (Osh x2, Choy x1, Salat x2).',
-        timestamp: DateTime(now.year, now.month, now.day, 10, 5),
-      ),
-      AuditEntry(
-        id: 'aud-3',
-        employeeId: 'EMP-101',
-        employeeName: 'Bobur Aliyev',
-        department: 'warehouse',
-        action: 'Qoldiq tekshiruvi',
-        details: 'O`simlik yog`i qoldig`i tekshirildi (Haqiqiy: 18 litr).',
-        timestamp: DateTime(now.year, now.month, now.day, 10, 40),
-      ),
-      AuditEntry(
-        id: 'aud-4',
-        employeeId: 'EMP-102',
-        employeeName: 'Malika Karimova',
-        department: 'pos',
-        action: 'POS Savdo cheki',
-        details: 'Chek #1002 yopildi. Jami: 95 000 so`m (Shashlik x3, Non x2).',
-        timestamp: DateTime(now.year, now.month, now.day, 11, 20),
-      ),
-      AuditEntry(
-        id: 'aud-5',
-        employeeId: 'EMP-101',
-        employeeName: 'Bobur Aliyev',
-        department: 'warehouse',
-        action: 'Chiqim hujjati',
-        details: 'Oshxona talabnomasi bo`yicha 10 kg Guruch chiqarildi.',
-        timestamp: DateTime(now.year, now.month, now.day, 11, 55),
-      ),
-    ]);
+  Future<void> fetchEvents() async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final client = SupabaseService.client;
+      final restId = SupabaseService.currentRestaurantId;
+      final res = await client
+          .from('business_events')
+          .select()
+          .eq('restaurant_id', restId)
+          .order('created_at', ascending: false)
+          .limit(100);
+
+      final loaded = res.map((json) => AuditEntry.fromJson(json)).toList();
+      _entries.clear();
+      _entries.addAll(loaded);
+    } catch (e) {
+      debugPrint('Error fetching audit events: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   Future<void> logAction({
@@ -111,7 +85,7 @@ class AuditService extends ChangeNotifier {
     Map<String, dynamic>? extraData,
   }) async {
     final session = SessionManager();
-    final effectiveEmpId = employeeId ?? session.currentEmployee?.id ?? 'EMP-101';
+    final effectiveEmpId = employeeId ?? session.currentEmployee?.id ?? '';
     final effectiveEmpName = employeeName ?? session.currentEmployee?.name ?? (session.currentRole == AppRole.owner ? 'Boshliq' : 'Xodim');
 
     final entry = AuditEntry(

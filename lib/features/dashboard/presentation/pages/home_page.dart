@@ -415,7 +415,7 @@ class HomePage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        '${"staff.your_id".tr()}: ${emp?.id ?? "EMP-103"}',
+                        '${"staff.your_id".tr()}: ${emp?.id ?? "EMP"}',
                         style: const TextStyle(
                           color: Colors.amber,
                           fontWeight: FontWeight.bold,

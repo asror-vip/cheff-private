@@ -87,8 +87,9 @@ class _RecipesPageState extends State<RecipesPage> {
             },
           ),
           IconButton(
-            icon: const Icon(Icons.more_vert, color: AppColors.textPrimary),
-            onPressed: () {},
+            icon: const Icon(Icons.refresh_rounded, color: AppColors.textPrimary),
+            tooltip: 'common.refresh'.tr(),
+            onPressed: () => context.read<RecipesProvider>().fetchRecipes(),
           ),
         ],
       ),

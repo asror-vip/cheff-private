@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../core/session/session_manager.dart';
 import '../../data/models/staff_model.dart';
 import '../../data/repositories/staff_repository.dart';
 
@@ -15,8 +14,6 @@ class StaffProvider extends ChangeNotifier {
   String? _error;
   String? get error => _error;
 
-  
-
   Future<void> fetchStaffData({bool background = false}) async {
     if (!background && _todayShifts.isEmpty) {
       _isLoading = true;
@@ -26,29 +23,30 @@ class StaffProvider extends ChangeNotifier {
     
     try {
       final shifts = await _repository.getTodayShifts();
-      if (shifts.isEmpty) {
-        final session = SessionManager();
-        final now = DateTime.now();
-        _todayShifts = session.employees
-            .where((e) => e.status == 'active')
-            .map((e) => ShiftModel(
-                  id: 'shift_${e.id}',
-                  userId: e.id,
-                  startTime: DateTime(now.year, now.month, now.day, 9, 0),
-                  status: 'active',
-                  staff: StaffModel(id: e.id, name: e.name, role: e.roleName, isActive: true),
-                ))
-            .toList();
-      } else {
-        _todayShifts = shifts;
-      }
+      _todayShifts = shifts;
     } catch (e) {
       _error = e.toString();
+    } finally {
+      if (_isLoading) {
+        _isLoading = false;
+      }
+      notifyListeners();
     }
-    if (_isLoading) {
-      _isLoading = false;
-    }
-    notifyListeners();
   }
 
+  Future<bool> startShift({required String userId, String? userName, String? role}) async {
+    final success = await _repository.startShift(userId: userId, userName: userName, role: role);
+    if (success) {
+      await fetchStaffData(background: true);
+    }
+    return success;
+  }
+
+  Future<bool> endShift(String shiftId) async {
+    final success = await _repository.endShift(shiftId);
+    if (success) {
+      await fetchStaffData(background: true);
+    }
+    return success;
+  }
 }

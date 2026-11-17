@@ -45,4 +45,30 @@ class StaffRepository {
       return [];
     }
   }
+
+  Future<bool> startShift({required String userId, String? userName, String? role}) async {
+    try {
+      await _client.from('shifts').insert({
+        'restaurant_id': SupabaseService.currentRestaurantId,
+        'user_id': userId,
+        'start_time': DateTime.now().toIso8601String(),
+        'status': 'active',
+      });
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> endShift(String shiftId) async {
+    try {
+      await _client.from('shifts').update({
+        'end_time': DateTime.now().toIso8601String(),
+        'status': 'completed',
+      }).eq('id', shiftId);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 }

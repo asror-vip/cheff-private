@@ -94,6 +94,16 @@ class UsersRolesSheet extends StatelessWidget {
               style: const TextStyle(color: AppColors.textSecondary, fontSize: 13, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 8),
+            if (session.employees.isEmpty)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 20),
+                child: Center(
+                  child: Text(
+                    'Xodimlar mavjud emas',
+                    style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
+                  ),
+                ),
+              ),
             ...session.employees.map((emp) {
               return Container(
                 margin: const EdgeInsets.only(bottom: 8),

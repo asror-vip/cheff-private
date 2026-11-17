@@ -336,7 +336,10 @@ class _LoginPageState extends State<LoginPage> {
           alignment: WrapAlignment.center,
           children: [
             GestureDetector(
-              onTap: () {},
+              onTap: () => _showLegalDialog(
+                title: 'auth.terms_of_use'.tr(),
+                content: 'ChefControl xizmatidan foydalanish shartlari: Tizim restoran boshqaruvi, POS, ombor va xodimlar hisobini yuritish uchun mo`ljallangan. Barcha hisob-kitoblar va kiritilgan ma`lumotlar xavfsiz shifrlangan holda bulutli serverlarda saqlanadi.',
+              ),
               child: Text(
                 'auth.terms_of_use'.tr(),
                 style: const TextStyle(
@@ -351,7 +354,10 @@ class _LoginPageState extends State<LoginPage> {
               style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
             ),
             GestureDetector(
-              onTap: () {},
+              onTap: () => _showLegalDialog(
+                title: 'auth.privacy_policy'.tr(),
+                content: 'ChefControl maxfiylik siyosati: Sizning shaxsiy va moliyaviy ma`lumotlaringiz uchinchi shaxslarga berilmaydi. Ma`lumotlar faqat restoraningiz faoliyatini avtomatlashtirish va hisobotlar shakllantirish maqsadida qayta ishlanadi.',
+              ),
               child: Text(
                 'auth.privacy_policy'.tr(),
                 style: const TextStyle(
@@ -364,6 +370,24 @@ class _LoginPageState extends State<LoginPage> {
           ],
         ),
       ],
+    );
+  }
+
+  void _showLegalDialog({required String title, required String content}) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(title, style: const TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.bold)),
+        content: Text(content, style: const TextStyle(color: AppColors.textSecondary, fontSize: 13, height: 1.4)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('OK', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
     );
   }
 

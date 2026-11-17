@@ -26,12 +26,6 @@ class ReportsPage extends StatelessWidget {
             'reports.title'.tr(),
             style: const TextStyle(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.more_vert, color: AppColors.textPrimary),
-              onPressed: () {},
-            )
-          ],
         ),
         body: Column(
           children: [
