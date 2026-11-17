@@ -66,38 +66,67 @@ class _MainLayoutState extends State<MainLayout> {
             children: pages,
           ),
           floatingActionButton: canAccessPos
-              ? FloatingActionButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const PosPage()),
-                    );
-                  },
-                  backgroundColor: Colors.deepOrange,
-                  foregroundColor: Colors.white,
-                  elevation: 4,
-                  shape: const CircleBorder(),
-                  child: const Icon(Icons.add, size: 28),
+              ? Container(
+                  width: 54,
+                  height: 54,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: AppColors.orangeGradient,
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFFFF7A00).withValues(alpha: 0.45),
+                        blurRadius: 14,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      customBorder: const CircleBorder(),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const PosPage()),
+                        );
+                      },
+                      child: const Center(
+                        child: Icon(Icons.add_rounded, size: 32, color: Colors.white),
+                      ),
+                    ),
+                  ),
                 )
               : null,
           floatingActionButtonLocation: canAccessPos ? FloatingActionButtonLocation.centerDocked : null,
           bottomNavigationBar: (session.currentRole == AppRole.staff && session.activeDepartment == Department.none)
               ? null
-              : BottomAppBar(
-                  color: AppColors.surface,
-                  shape: canAccessPos ? const CircularNotchedRectangle() : null,
-                  notchMargin: 8.0,
-                  padding: EdgeInsets.zero,
-                  child: SizedBox(
-                    height: 60,
-                    child: Row(
-                      children: [
-                        Expanded(child: _buildNavItem(icon: Icons.home_filled, label: 'dashboard.nav_home'.tr(), index: 0)),
-                        Expanded(child: _buildNavItem(icon: Icons.search, label: 'dashboard.nav_search'.tr(), index: 1)),
-                        if (canAccessPos) const SizedBox(width: 48),
-                        Expanded(child: _buildNavItem(icon: Icons.chat_bubble_outline, label: 'dashboard.nav_chat'.tr(), index: 3)),
-                        Expanded(child: _buildNavItem(icon: Icons.person_outline, label: 'dashboard.nav_profile'.tr(), index: 4)),
-                      ],
+              : Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    border: Border(
+                      top: BorderSide(
+                        color: Colors.white.withValues(alpha: 0.08),
+                        width: 1,
+                      ),
+                    ),
+                  ),
+                  child: BottomAppBar(
+                    color: Colors.transparent,
+                    elevation: 0,
+                    shape: canAccessPos ? const CircularNotchedRectangle() : null,
+                    notchMargin: 8.0,
+                    padding: EdgeInsets.zero,
+                    child: SizedBox(
+                      height: 60,
+                      child: Row(
+                        children: [
+                          Expanded(child: _buildNavItem(icon: Icons.home_filled, label: 'dashboard.nav_home'.tr(), index: 0)),
+                          Expanded(child: _buildNavItem(icon: Icons.search_rounded, label: 'dashboard.nav_search'.tr(), index: 1)),
+                          if (canAccessPos) const SizedBox(width: 48),
+                          Expanded(child: _buildNavItem(icon: Icons.chat_bubble_rounded, label: 'dashboard.nav_chat'.tr(), index: 3)),
+                          Expanded(child: _buildNavItem(icon: Icons.person_rounded, label: 'dashboard.nav_profile'.tr(), index: 4)),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -109,19 +138,19 @@ class _MainLayoutState extends State<MainLayout> {
 
   Widget _buildNavItem({required IconData icon, required String label, required int index}) {
     final isSelected = _currentIndex == index;
-    final color = isSelected ? Colors.deepOrange : AppColors.textSecondary;
+    final color = isSelected ? AppColors.primary : AppColors.textSecondary;
     
     return InkResponse(
       onTap: () => _onTabTapped(index),
       radius: 32,
-      splashColor: Colors.deepOrange.withValues(alpha: 0.1),
+      splashColor: AppColors.primary.withValues(alpha: 0.12),
       highlightColor: Colors.transparent,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, color: color, size: 24),
-          const SizedBox(height: 4),
+          Icon(icon, color: color, size: 23),
+          const SizedBox(height: 3),
           Text(
             label,
             maxLines: 1,

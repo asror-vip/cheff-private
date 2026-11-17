@@ -230,28 +230,30 @@ class _AiAssistantViewState extends State<AiAssistantView> {
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-              itemCount: provider.messages.length + (provider.isLoading ? 1 : 0),
-              itemBuilder: (context, index) {
-                if (index == 0) {
-                  return Column(
-                    children: [
-                      _buildDateBadge(context),
-                      const SizedBox(height: 8),
-                      _buildMessageItem(provider.messages[index]),
-                    ],
-                  );
-                }
+            child: provider.messages.isEmpty && !provider.isLoading
+                ? _buildEmptyGreeting(context, provider)
+                : ListView.builder(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                    itemCount: provider.messages.length + (provider.isLoading ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (index == 0) {
+                        return Column(
+                          children: [
+                            _buildDateBadge(context),
+                            const SizedBox(height: 8),
+                            _buildMessageItem(provider.messages[index]),
+                          ],
+                        );
+                      }
 
-                if (index < provider.messages.length) {
-                  return _buildMessageItem(provider.messages[index]);
-                }
+                      if (index < provider.messages.length) {
+                        return _buildMessageItem(provider.messages[index]);
+                      }
 
-                return _buildTypingIndicator();
-              },
-            ),
+                      return _buildTypingIndicator();
+                    },
+                  ),
           ),
           AiVoiceRecordBar(
             controller: _textController,
@@ -347,6 +349,137 @@ class _AiAssistantViewState extends State<AiAssistantView> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyGreeting(BuildContext context, AiAssistantProvider provider) {
+    final actions = [
+      (Icons.add_circle_outline_rounded, const Color(0xFF246BFD), 'ai_assistant.action_create_ttk'),
+      (Icons.calculate_outlined, const Color(0xFFFF7A00), 'ai_assistant.action_calc_foodcost'),
+      (Icons.menu_book_rounded, const Color(0xFFE67E22), 'ai_assistant.action_create_menu'),
+      (Icons.shopping_cart_outlined, const Color(0xFF10B981), 'ai_assistant.action_purchase_req'),
+      (Icons.bar_chart_rounded, const Color(0xFF6366F1), 'ai_assistant.action_sales_analysis'),
+      (Icons.people_outline_rounded, const Color(0xFF06B6D4), 'ai_assistant.action_staff_schedule'),
+      (Icons.description_outlined, const Color(0xFFF59E0B), 'ai_assistant.action_finance_report'),
+      (Icons.chat_bubble_outline_rounded, const Color(0xFF94A3B8), 'ai_assistant.action_any_question'),
+    ];
+
+    return SingleChildScrollView(
+      controller: _scrollController,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+      child: Column(
+        children: [
+          Container(
+            width: 82,
+            height: 82,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: const LinearGradient(
+                colors: [Color(0xFF246BFD), Color(0xFF00C6FF)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF246BFD).withValues(alpha: 0.4),
+                  blurRadius: 20,
+                  spreadRadius: 2,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+            child: const Icon(
+              Icons.smart_toy_rounded,
+              size: 46,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'ai_assistant.greeting'.tr(),
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: AppColors.textPrimary,
+              fontSize: 17,
+              fontWeight: FontWeight.bold,
+              height: 1.35,
+            ),
+          ),
+          const SizedBox(height: 22),
+          ...actions.map((act) {
+            final icon = act.$1;
+            final color = act.$2;
+            final labelKey = act.$3;
+            final label = labelKey.tr();
+
+            return Container(
+              margin: const EdgeInsets.only(bottom: 10),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.07),
+                  width: 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.18),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(14),
+                  onTap: () {
+                    provider.sendTextMessage(label);
+                  },
+                  splashColor: color.withValues(alpha: 0.14),
+                  highlightColor: color.withValues(alpha: 0.06),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 36,
+                          height: 36,
+                          decoration: BoxDecoration(
+                            color: color.withValues(alpha: 0.14),
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: color.withValues(alpha: 0.32),
+                              width: 1,
+                            ),
+                          ),
+                          child: Icon(icon, color: color, size: 20),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            label,
+                            style: const TextStyle(
+                              color: AppColors.textPrimary,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        const Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          size: 13,
+                          color: AppColors.textMuted,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }),
+        ],
       ),
     );
   }

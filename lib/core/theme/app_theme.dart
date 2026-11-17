@@ -40,14 +40,14 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
-          elevation: 0,
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+          elevation: 2,
+          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(14),
           ),
           textStyle: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
           ),
         ),
       ),

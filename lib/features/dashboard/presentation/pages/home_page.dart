@@ -45,102 +45,102 @@ class HomePage extends StatelessWidget {
     return [
       _MenuItemConfig(
         title: 'dashboard.menu_ai'.tr(context: context),
-        icon: Icons.smart_toy,
-        iconColor: Colors.deepPurpleAccent,
+        icon: Icons.smart_toy_rounded,
+        iconColor: AppColors.catAi,
         department: Department.none,
         page: const AiAssistantPage(),
       ),
       _MenuItemConfig(
         title: 'dashboard.menu_ttk'.tr(context: context),
-        icon: Icons.restaurant,
-        iconColor: Colors.orangeAccent,
+        icon: Icons.restaurant_menu_rounded,
+        iconColor: AppColors.catTtk,
         department: Department.kitchen,
         page: const RecipesPage(),
       ),
       _MenuItemConfig(
         title: 'dashboard.menu_foodcost'.tr(context: context),
-        icon: Icons.menu_book,
-        iconColor: Colors.deepOrange,
+        icon: Icons.menu_book_rounded,
+        iconColor: AppColors.catMenu,
         department: Department.kitchen,
         page: const MenuFoodcostPage(),
       ),
       _MenuItemConfig(
         title: 'dashboard.menu_purchases'.tr(context: context),
-        icon: Icons.shopping_cart,
-        iconColor: Colors.green,
+        icon: Icons.shopping_cart_rounded,
+        iconColor: AppColors.catPurchases,
         department: Department.purchases,
         page: const PurchasesPage(),
       ),
       _MenuItemConfig(
         title: 'dashboard.menu_warehouse'.tr(context: context),
-        icon: Icons.inventory_2,
-        iconColor: Colors.blueAccent,
+        icon: Icons.inventory_2_rounded,
+        iconColor: AppColors.catWarehouse,
         department: Department.warehouse,
         page: const InventoryPage(),
       ),
       _MenuItemConfig(
         title: 'dashboard.menu_sales'.tr(context: context),
-        icon: Icons.bar_chart,
-        iconColor: Colors.deepPurple,
+        icon: Icons.bar_chart_rounded,
+        iconColor: AppColors.catSales,
         department: Department.pos,
         page: const SalesPage(),
       ),
       _MenuItemConfig(
         title: 'dashboard.menu_staff'.tr(context: context),
-        icon: Icons.people,
-        iconColor: Colors.cyan,
+        icon: Icons.people_alt_rounded,
+        iconColor: AppColors.catStaff,
         department: Department.none,
         page: const StaffPage(),
         adminOnly: true,
       ),
       _MenuItemConfig(
         title: 'dashboard.menu_finance'.tr(context: context),
-        icon: Icons.monetization_on,
-        iconColor: Colors.amber,
+        icon: Icons.account_balance_wallet_rounded,
+        iconColor: AppColors.catFinance,
         department: Department.finance,
         page: const FinancePage(),
         adminOnly: true,
       ),
       _MenuItemConfig(
         title: 'dashboard.menu_reports'.tr(context: context),
-        icon: Icons.description,
-        iconColor: Colors.white70,
+        icon: Icons.description_rounded,
+        iconColor: AppColors.catReports,
         department: Department.none,
         page: const ReportsPage(),
         adminOnly: true,
       ),
       _MenuItemConfig(
         title: 'production.title'.tr(context: context),
-        icon: Icons.soup_kitchen,
-        iconColor: Colors.deepOrange,
+        icon: Icons.soup_kitchen_rounded,
+        iconColor: AppColors.catKitchen,
         department: Department.kitchen,
         page: const ProductionPage(),
       ),
       _MenuItemConfig(
         title: 'Kassa Smenasi',
-        icon: Icons.lock_clock,
-        iconColor: Colors.teal,
+        icon: Icons.lock_clock_rounded,
+        iconColor: const Color(0xFF14B8A6),
         department: Department.pos,
         page: const ShiftPage(),
       ),
       _MenuItemConfig(
         title: 'Stollar',
-        icon: Icons.table_restaurant,
-        iconColor: Colors.brown,
+        icon: Icons.table_restaurant_rounded,
+        iconColor: AppColors.catTables,
         department: Department.pos,
         page: const TablesPage(),
       ),
       _MenuItemConfig(
         title: 'kitchen.title'.tr(context: context),
-        icon: Icons.kitchen,
-        iconColor: Colors.redAccent,
+        icon: Icons.kitchen_rounded,
+        iconColor: const Color(0xFFFF4757),
         department: Department.kitchen,
         page: const KitchenPage(),
       ),
       _MenuItemConfig(
         title: 'dashboard.menu_settings'.tr(context: context),
-        icon: Icons.settings,
-        iconColor: Colors.grey,
+        icon: Icons.settings_rounded,
+        iconColor: const Color(0xFF64748B),
         department: Department.none,
         page: const SettingsPage(),
         adminOnly: true,
@@ -533,7 +533,7 @@ class HomePage extends StatelessWidget {
               crossAxisCount: 2,
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
-              childAspectRatio: 1.3,
+              childAspectRatio: 1.22,
             ),
             itemBuilder: (context, index) {
               final item = allowedItems[index];
@@ -655,7 +655,7 @@ class HomePage extends StatelessWidget {
               crossAxisCount: 2,
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
-              childAspectRatio: 1.3,
+              childAspectRatio: 1.22,
             ),
             itemBuilder: (context, index) {
               final item = visibleItems[index];
@@ -684,33 +684,63 @@ class HomePage extends StatelessWidget {
     required Color iconColor,
     required VoidCallback onTap,
   }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.08),
+          width: 1,
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(icon, color: iconColor, size: 26),
-            const Spacer(),
-            Text(
-              title,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.w600,
-                fontSize: 13,
-                height: 1.2,
-              ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.22),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(18),
+          splashColor: iconColor.withValues(alpha: 0.14),
+          highlightColor: iconColor.withValues(alpha: 0.06),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: iconColor.withValues(alpha: 0.14),
+                    borderRadius: BorderRadius.circular(13),
+                    border: Border.all(
+                      color: iconColor.withValues(alpha: 0.32),
+                      width: 1.2,
+                    ),
+                  ),
+                  child: Icon(icon, color: iconColor, size: 23),
+                ),
+                Text(
+                  title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    letterSpacing: -0.2,
+                    height: 1.25,
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
