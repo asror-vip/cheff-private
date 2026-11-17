@@ -17,6 +17,8 @@ class InventoryPage extends StatefulWidget {
 class _InventoryPageState extends State<InventoryPage> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final ScrollController _scrollController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
   String? _highlightedItemId;
 
   int _selectedCategoryIndex = 0;
@@ -25,10 +27,23 @@ class _InventoryPageState extends State<InventoryPage> with SingleTickerProvider
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _searchController.addListener(() {
+      setState(() {
+        _searchQuery = _searchController.text.trim().toLowerCase();
+      });
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = context.read<InventoryProvider>();
       provider.fetchInventory(background: provider.items.isNotEmpty);
     });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _searchController.dispose();
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -98,24 +113,34 @@ class _InventoryPageState extends State<InventoryPage> with SingleTickerProvider
       ),
       body: Column(
         children: [
-          // Segmented Control
+          // Segmented Pill TabBar matching Screen #7
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child: Container(
-              height: 40,
+              height: 42,
               decoration: BoxDecoration(
                 color: AppColors.surface,
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
               ),
+              padding: const EdgeInsets.all(3),
               child: TabBar(
                 controller: _tabController,
                 indicator: BoxDecoration(
-                  color: Colors.blueAccent,
-                  borderRadius: BorderRadius.circular(8),
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withValues(alpha: 0.35),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
                 indicatorSize: TabBarIndicatorSize.tab,
                 labelColor: Colors.white,
                 unselectedLabelColor: AppColors.textSecondary,
+                labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                 dividerColor: Colors.transparent,
                 tabs: [
                   Tab(text: 'inventory.tab_balances'.tr()),
@@ -136,10 +161,30 @@ class _InventoryPageState extends State<InventoryPage> with SingleTickerProvider
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.blueAccent,
-        onPressed: _showAddOptionsModal,
-        child: const Icon(Icons.add, color: Colors.white),
+      floatingActionButton: Container(
+        width: 54,
+        height: 54,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: AppColors.primaryGradient,
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primary.withValues(alpha: 0.4),
+              blurRadius: 14,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            customBorder: const CircleBorder(),
+            onTap: _showAddOptionsModal,
+            child: const Center(
+              child: Icon(Icons.add_rounded, color: Colors.white, size: 28),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -428,11 +473,11 @@ class _InventoryPageState extends State<InventoryPage> with SingleTickerProvider
   Widget _buildBalances() {
     return Consumer<InventoryProvider>(
       builder: (context, provider, child) {
-        if (provider.isLoading) {
+        if (provider.isLoading && provider.items.isEmpty) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        if (provider.error != null) {
+        if (provider.error != null && provider.items.isEmpty) {
           return Center(child: Text(provider.error!, style: const TextStyle(color: AppColors.error)));
         }
 
@@ -453,15 +498,137 @@ class _InventoryPageState extends State<InventoryPage> with SingleTickerProvider
 
         final selectedCategory = categories[selectedIndex];
 
-        final filteredItems = selectedCategory == allCategoryLabel 
-            ? itemsList 
-            : itemsList.where((item) => item.category == selectedCategory).toList();
+        final filteredItems = itemsList.where((item) {
+          final matchesCategory = selectedCategory == allCategoryLabel || item.category == selectedCategory;
+          final matchesSearch = _searchQuery.isEmpty ||
+              item.name.toLowerCase().contains(_searchQuery) ||
+              item.category.toLowerCase().contains(_searchQuery);
+          return matchesCategory && matchesSearch;
+        }).toList();
+
+        final totalCount = itemsList.length;
+        final totalSum = itemsList.fold(0.0, (sum, i) => sum + i.totalValue);
 
         return Column(
           children: [
+            // Top Summary Metric Cards matching Screen #7
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 10),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.18),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('inventory.total_positions'.tr().isEmpty ? 'Всего позиций' : 'inventory.total_positions'.tr(), style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                          const SizedBox(height: 6),
+                          Text('$totalCount', style: const TextStyle(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.18),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('inventory.total_sum'.tr().isEmpty ? 'На сумму' : 'inventory.total_sum'.tr(), style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                          const SizedBox(height: 6),
+                          Text(
+                            totalSum > 0 
+                                ? NumberFormat.currency(locale: 'uz', symbol: 'сум', decimalDigits: 0).format(totalSum)
+                                : '0 сум',
+                            style: const TextStyle(
+                              color: AppColors.textPrimary,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Inline Search Bar matching Screen #7
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+              child: Container(
+                height: 48,
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.2),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                child: Row(
+                  children: [
+                    const Icon(Icons.search_rounded, color: AppColors.textSecondary, size: 20),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: TextField(
+                        controller: _searchController,
+                        style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
+                        decoration: InputDecoration(
+                          hintText: 'inventory.search_hint'.tr().isEmpty ? 'Поиск продуктов...' : 'inventory.search_hint'.tr(),
+                          hintStyle: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
+                          border: InputBorder.none,
+                          isDense: true,
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                      ),
+                    ),
+                    if (_searchQuery.isNotEmpty)
+                      GestureDetector(
+                        onTap: () => _searchController.clear(),
+                        child: const Icon(Icons.close_rounded, color: AppColors.textSecondary, size: 18),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+
             // Categories chips
             SizedBox(
-              height: 48,
+              height: 40,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -469,7 +636,7 @@ class _InventoryPageState extends State<InventoryPage> with SingleTickerProvider
                 itemBuilder: (context, index) {
                   final isSelected = selectedIndex == index;
                   return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
                     child: InkWell(
                       onTap: () {
                         setState(() {
@@ -481,15 +648,25 @@ class _InventoryPageState extends State<InventoryPage> with SingleTickerProvider
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color: isSelected ? Colors.blueAccent : AppColors.surface,
+                          color: isSelected ? AppColors.primary : AppColors.surface,
                           borderRadius: BorderRadius.circular(20),
-                          border: isSelected ? null : Border.all(color: Colors.white10),
+                          border: isSelected ? null : Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                          boxShadow: isSelected
+                              ? [
+                                  BoxShadow(
+                                    color: AppColors.primary.withValues(alpha: 0.35),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  )
+                                ]
+                              : null,
                         ),
                         child: Text(
                           categories[index],
                           style: TextStyle(
                             color: isSelected ? Colors.white : AppColors.textSecondary,
-                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                            fontSize: 13,
                           ),
                         ),
                       ),
@@ -499,134 +676,160 @@ class _InventoryPageState extends State<InventoryPage> with SingleTickerProvider
               ),
             ),
             
-            // Items List
+            const SizedBox(height: 8),
+
+            // Items List matching Screen #7
             Expanded(
-              child: ListView.builder(
-                controller: _scrollController,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                itemCount: filteredItems.length,
-                itemBuilder: (context, index) {
-                  final item = filteredItems[index];
-                  final isHighlighted = item.id == _highlightedItemId;
-                  
-                  return AnimatedContainer(
-                    duration: const Duration(milliseconds: 500),
-                    margin: const EdgeInsets.only(bottom: 12),
-                    decoration: BoxDecoration(
-                      color: isHighlighted ? Colors.grey.withAlpha(76) : AppColors.surface, // 76 is ~0.3 opacity
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: isHighlighted ? Colors.blueAccent : Colors.white10),
-                    ),
-                    child: Stack(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      item.name,
-                                      style: const TextStyle(
-                                        color: AppColors.textPrimary, 
-                                        fontSize: 16, 
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: Colors.blueAccent.withAlpha(25), // 0.1 opacity
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Text(
-                                  item.category,
-                                  style: const TextStyle(color: Colors.blueAccent, fontSize: 12, fontWeight: FontWeight.w500),
-                                ),
+              child: filteredItems.isEmpty
+                  ? Center(
+                      child: Text(
+                        'common.no_data'.tr(),
+                        style: const TextStyle(color: AppColors.textSecondary),
+                      ),
+                    )
+                  : ListView.builder(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                      itemCount: filteredItems.length,
+                      itemBuilder: (context, index) {
+                        final item = filteredItems[index];
+                        final isHighlighted = item.id == _highlightedItemId;
+                        final isCritical = item.quantity <= 2;
+                        final isLow = item.isLowStock || item.quantity <= 5;
+                        
+                        final statusColor = isCritical 
+                            ? AppColors.error 
+                            : (isLow ? AppColors.warning : AppColors.success);
+                        final statusText = isCritical
+                            ? 'Критический'
+                            : (isLow ? 'Низкий' : 'Норма');
+
+                        return AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          margin: const EdgeInsets.only(bottom: 10),
+                          decoration: BoxDecoration(
+                            color: isHighlighted 
+                                ? AppColors.primary.withValues(alpha: 0.2) 
+                                : AppColors.surface,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: isHighlighted 
+                                  ? AppColors.primary 
+                                  : Colors.white.withValues(alpha: 0.07),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.18),
+                                blurRadius: 6,
+                                offset: const Offset(0, 2),
                               ),
                             ],
                           ),
-                        ),
-                        const SizedBox(width: 16),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              '${item.quantity}',
-                              style: const TextStyle(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              item.unit,
-                              style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(width: 8),
-                        SizedBox(
-                          width: 30,
-                          height: 30,
-                          child: PopupMenuButton<String>(
-                            padding: EdgeInsets.zero,
-                            icon: const Icon(Icons.more_vert, color: AppColors.textSecondary, size: 20),
-                            color: AppColors.surface,
-                            onSelected: (value) {
-                              if (value == 'edit') {
-                                _showEditItemModal(item);
-                              } else if (value == 'delete') {
-                                _deleteItem(item);
-                              }
-                            },
-                            itemBuilder: (context) => [
-                              PopupMenuItem(
-                                value: 'edit',
-                                child: Text('common.edit'.tr(), style: const TextStyle(color: AppColors.textPrimary)),
-                              ),
-                              PopupMenuItem(
-                                value: 'delete',
-                                child: Text('common.delete'.tr(), style: const TextStyle(color: AppColors.error)),
-                              ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: Row(
+                              children: [
+                                // Rounded Box Icon
+                                Container(
+                                  width: 46,
+                                  height: 46,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.catWarehouse.withValues(alpha: 0.15),
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: AppColors.catWarehouse.withValues(alpha: 0.3),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: const Icon(
+                                    Icons.inventory_2_rounded,
+                                    color: AppColors.catWarehouse,
+                                    size: 22,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        item.name,
+                                        style: const TextStyle(
+                                          color: AppColors.textPrimary,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        '${item.quantity} ${item.unit} • ${item.category}',
+                                        style: const TextStyle(
+                                          color: AppColors.textSecondary,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: statusColor.withValues(alpha: 0.15),
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: statusColor.withValues(alpha: 0.35),
+                                      width: 0.8,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    statusText,
+                                    style: TextStyle(
+                                      color: statusColor,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                SizedBox(
+                                  width: 28,
+                                  height: 28,
+                                  child: PopupMenuButton<String>(
+                                    padding: EdgeInsets.zero,
+                                    icon: const Icon(Icons.more_vert, color: AppColors.textSecondary, size: 18),
+                                    color: AppColors.surface,
+                                    onSelected: (value) {
+                                      if (value == 'edit') {
+                                        _showEditItemModal(item);
+                                      } else if (value == 'delete') {
+                                        _deleteItem(item);
+                                      }
+                                    },
+                                    itemBuilder: (context) => [
+                                      PopupMenuItem(
+                                        value: 'edit',
+                                        child: Text('common.edit'.tr(), style: const TextStyle(color: AppColors.textPrimary)),
+                                      ),
+                                      PopupMenuItem(
+                                        value: 'delete',
+                                        child: Text('common.delete'.tr(), style: const TextStyle(color: AppColors.error)),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ],
                             ),
                           ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
-                    if (item.isNew)
-                      Positioned(
-                        top: 0,
-                        left: 0,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: const BoxDecoration(
-                            color: AppColors.success,
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(16),
-                              bottomRight: Radius.circular(8),
-                            ),
-                          ),
-                          child: const Text(
-                            'NEW',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              );
-            },
-              ),
             ),
           ],
         );
-    });
+      },
+    );
   }
 
   Widget _buildInventoryTab() {

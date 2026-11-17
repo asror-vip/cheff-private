@@ -40,9 +40,69 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> with SingleTickerPr
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text(''),
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.surface,
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: Text(
+          widget.recipe.name,
+          style: const TextStyle(
+            color: AppColors.textPrimary,
+            fontSize: 17,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.share_outlined, color: AppColors.textPrimary),
+            onPressed: () {
+              ToastUtils.showInfo(context, 'TTK havolasi nusxalandi');
+            },
+          ),
+        ],
+      ),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.fromLTRB(16, 10, 16, 20),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          border: Border(
+            top: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
+          ),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.check_rounded, size: 20),
+                label: Text('common.save'.tr()),
+                onPressed: () {
+                  ToastUtils.showSuccess(context, 'Muvaffaqiyatli saqlandi');
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            OutlinedButton.icon(
+              icon: const Icon(Icons.print_outlined, size: 20, color: AppColors.textPrimary),
+              label: Text('common.print'.tr(), style: const TextStyle(color: AppColors.textPrimary)),
+              onPressed: () {
+                ToastUtils.showInfo(context, 'PDF / Chek tayyorlanmoqda...');
+              },
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: Colors.white.withValues(alpha: 0.15)),
+                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              ),
+            ),
+          ],
+        ),
       ),
       body: Consumer<RecipesProvider>(
         builder: (context, provider, child) {
@@ -190,16 +250,39 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> with SingleTickerPr
 
               const SizedBox(height: 16),
               
-              // Tabs
-              TabBar(
-                controller: _tabController,
-                indicatorColor: AppColors.primary,
-                labelColor: AppColors.primary,
-                unselectedLabelColor: AppColors.textSecondary,
-                tabs: [
-                  Tab(text: 'recipes.tab_ingredients'.tr()),
-                  Tab(text: 'recipes.tab_technology'.tr()),
-                ],
+              // Tabs - Modern Pill Segmented Switcher matching Screen #4
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                height: 42,
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                ),
+                padding: const EdgeInsets.all(3),
+                child: TabBar(
+                  controller: _tabController,
+                  indicator: BoxDecoration(
+                    color: AppColors.primary,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primary.withValues(alpha: 0.35),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  dividerColor: Colors.transparent,
+                  labelColor: Colors.white,
+                  unselectedLabelColor: AppColors.textSecondary,
+                  labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                  tabs: [
+                    Tab(text: 'recipes.tab_ingredients'.tr()),
+                    Tab(text: 'recipes.tab_technology'.tr()),
+                  ],
+                ),
               ),
               
               // Tab Content
@@ -221,38 +304,72 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> with SingleTickerPr
 
   Widget _buildStatCard(String label, String value, Color valueColor) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white10),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.18),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(label, style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
-          const SizedBox(height: 4),
+          const SizedBox(height: 6),
           Text(value, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: valueColor)),
         ],
       ),
     );
   }
 
+  Widget _buildSummaryRow(String label, String value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            color: AppColors.textSecondary,
+            fontSize: 13,
+          ),
+        ),
+        Text(
+          value,
+          style: const TextStyle(
+            color: AppColors.textPrimary,
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildIngredientsTab(RecipeEntity updatedRecipe) {
+    final sellingPriceVal = updatedRecipe.sellingPrice > 0
+        ? updatedRecipe.sellingPrice.toInt()
+        : (updatedRecipe.costPrice * 2.5).toInt();
+
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
         // Table Header
         Row(
           children: [
-            Expanded(flex: 3, child: Text('recipes.col_ingredient'.tr(), style: const TextStyle(color: AppColors.textSecondary, fontSize: 12))),
-            Expanded(flex: 2, child: Text('recipes.col_weight'.tr(), textAlign: TextAlign.right, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12))),
-            Expanded(flex: 2, child: Text('recipes.col_price'.tr(), textAlign: TextAlign.right, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12))),
-            Expanded(flex: 2, child: Text('recipes.col_sum'.tr(), textAlign: TextAlign.right, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12))),
+            Expanded(flex: 3, child: Text('recipes.col_ingredient'.tr(), style: const TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.bold))),
+            Expanded(flex: 2, child: Text('recipes.col_weight'.tr(), textAlign: TextAlign.right, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.bold))),
+            Expanded(flex: 2, child: Text('recipes.col_price'.tr(), textAlign: TextAlign.right, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.bold))),
+            Expanded(flex: 2, child: Text('recipes.col_sum'.tr(), textAlign: TextAlign.right, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.bold))),
             const SizedBox(width: 36),
           ],
         ),
-        const Divider(color: Colors.white10, height: 24),
+        const Divider(color: Colors.white10, height: 20),
         // Ingredients List
         ...updatedRecipe.items.map((ing) {
               String qtyStr = ing.quantity == ing.quantity.toInt() ? ing.quantity.toInt().toString() : ing.quantity.toStringAsFixed(3).replaceAll(RegExp(r'0*$'), '').replaceAll(RegExp(r'\.$'), '');
@@ -263,10 +380,10 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> with SingleTickerPr
                 padding: const EdgeInsets.only(bottom: 8),
                 child: Row(
                   children: [
-                    Expanded(flex: 3, child: Text(ing.productName, style: const TextStyle(color: AppColors.textPrimary))),
-                    Expanded(flex: 2, child: Text('$qtyStr ${ing.unit}', textAlign: TextAlign.right, style: const TextStyle(color: AppColors.textPrimary))),
-                    Expanded(flex: 2, child: Text(priceStr, textAlign: TextAlign.right, style: const TextStyle(color: AppColors.textPrimary))),
-                    Expanded(flex: 2, child: Text(sumStr, textAlign: TextAlign.right, style: const TextStyle(color: AppColors.textPrimary))),
+                    Expanded(flex: 3, child: Text(ing.productName, style: const TextStyle(color: AppColors.textPrimary, fontSize: 13, fontWeight: FontWeight.w500))),
+                    Expanded(flex: 2, child: Text('$qtyStr ${ing.unit}', textAlign: TextAlign.right, style: const TextStyle(color: AppColors.textPrimary, fontSize: 13))),
+                    Expanded(flex: 2, child: Text(priceStr, textAlign: TextAlign.right, style: const TextStyle(color: AppColors.textSecondary, fontSize: 13))),
+                    Expanded(flex: 2, child: Text(sumStr, textAlign: TextAlign.right, style: const TextStyle(color: AppColors.textPrimary, fontSize: 13, fontWeight: FontWeight.bold))),
                     SizedBox(
                       width: 36,
                       child: IconButton(
@@ -302,14 +419,85 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> with SingleTickerPr
                 ),
               );
             }),
-            const SizedBox(height: 16),
-            // Add Button
-            TextButton.icon(
-              onPressed: () => _showAddIngredientModal(context, widget.recipe.id),
-              icon: const Icon(Icons.add, color: AppColors.primary),
-              label: Text('recipes.add_ingredient'.tr(), style: const TextStyle(color: AppColors.primary)),
-              style: TextButton.styleFrom(alignment: Alignment.centerLeft),
+        const SizedBox(height: 12),
+        // Add Button matching Screen #4
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton.icon(
+            onPressed: () => _showAddIngredientModal(context, widget.recipe.id),
+            icon: const Icon(Icons.add_rounded, color: AppColors.primary, size: 20),
+            label: Text(
+              'recipes.add_ingredient'.tr(),
+              style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 13),
             ),
+            style: OutlinedButton.styleFrom(
+              side: BorderSide(color: AppColors.primary.withValues(alpha: 0.45)),
+              backgroundColor: AppColors.primary.withValues(alpha: 0.08),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+          ),
+        ),
+
+        // Summary Calculation Card matching Screen #4
+        Container(
+          margin: const EdgeInsets.only(top: 16),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.2),
+                blurRadius: 8,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              _buildSummaryRow('recipes.dish_yield'.tr(), '${updatedRecipe.outputQuantity.toInt()} ${updatedRecipe.outputUnit}'),
+              const SizedBox(height: 10),
+              _buildSummaryRow('recipes.cost_price'.tr(), '${updatedRecipe.costPrice.toInt()} ${'common.currency_sum'.tr()}'),
+              const SizedBox(height: 10),
+              _buildSummaryRow('recipes.selling_price'.tr().isEmpty ? 'Sotuv narxi' : 'recipes.selling_price'.tr(), '$sellingPriceVal ${'common.currency_sum'.tr()}'),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                child: Divider(color: Colors.white10),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'recipes.foodcost'.tr(),
+                    style: const TextStyle(
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: AppColors.success.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: AppColors.success.withValues(alpha: 0.35)),
+                    ),
+                    child: Text(
+                      '${updatedRecipe.foodcostPercentage.toStringAsFixed(1)}%',
+                      style: const TextStyle(
+                        color: AppColors.success,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }

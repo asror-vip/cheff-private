@@ -45,23 +45,33 @@ class _FinancePageState extends State<FinancePage> {
         length: 2,
         child: Column(
           children: [
-            // Segmented Control
+            // Segmented Pill TabBar matching Screen #11
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               child: Container(
-                height: 40,
+                height: 42,
                 decoration: BoxDecoration(
                   color: AppColors.surface,
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
                 ),
+                padding: const EdgeInsets.all(3),
                 child: TabBar(
                   indicator: BoxDecoration(
-                    color: Colors.blueAccent,
-                    borderRadius: BorderRadius.circular(8),
+                    color: AppColors.primary,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primary.withValues(alpha: 0.35),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
                   indicatorSize: TabBarIndicatorSize.tab,
                   labelColor: Colors.white,
                   unselectedLabelColor: AppColors.textSecondary,
+                  labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                   dividerColor: Colors.transparent,
                   tabs: [
                     Tab(text: 'finance.income'.tr()),
@@ -191,10 +201,30 @@ class _FinancePageState extends State<FinancePage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.blueAccent,
-        onPressed: _showAddTransactionModal,
-        child: const Icon(Icons.add, color: Colors.white),
+      floatingActionButton: Container(
+        width: 54,
+        height: 54,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: AppColors.primaryGradient,
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primary.withValues(alpha: 0.4),
+              blurRadius: 14,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            customBorder: const CircleBorder(),
+            onTap: _showAddTransactionModal,
+            child: const Center(
+              child: Icon(Icons.add_rounded, color: Colors.white, size: 28),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -302,26 +332,42 @@ class _FinancePageState extends State<FinancePage> {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white10),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.18),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+          Text(title, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.w500)),
           const SizedBox(height: 8),
           Text(value, style: const TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
-          Row(
-            children: [
-              Icon(
-                percent.startsWith('+') ? Icons.arrow_upward : Icons.arrow_downward, 
-                color: percentColor, 
-                size: 14
-              ),
-              const SizedBox(width: 4),
-              Text(percent, style: TextStyle(color: percentColor, fontSize: 12, fontWeight: FontWeight.bold)),
-            ],
-          )
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+            decoration: BoxDecoration(
+              color: percentColor.withValues(alpha: 0.14),
+              borderRadius: BorderRadius.circular(6),
+              border: Border.all(color: percentColor.withValues(alpha: 0.3), width: 0.8),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  percent.startsWith('+') ? Icons.arrow_upward_rounded : Icons.arrow_downward_rounded, 
+                  color: percentColor, 
+                  size: 13,
+                ),
+                const SizedBox(width: 3),
+                Text(percent, style: TextStyle(color: percentColor, fontSize: 11, fontWeight: FontWeight.bold)),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -329,12 +375,19 @@ class _FinancePageState extends State<FinancePage> {
 
   Widget _buildFinanceItem(String titleKey, double amount, bool isIncome) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white10),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.07)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.15),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -344,7 +397,7 @@ class _FinancePageState extends State<FinancePage> {
               titleKey,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(color: AppColors.textPrimary, fontSize: 16),
+              style: const TextStyle(color: AppColors.textPrimary, fontSize: 15, fontWeight: FontWeight.w600),
             ),
           ),
           const SizedBox(width: 12),
@@ -352,7 +405,7 @@ class _FinancePageState extends State<FinancePage> {
             '${isIncome ? '+' : '-'} ${amount.toInt()} ${'common.currency_sum'.tr()}',
             style: TextStyle(
               color: isIncome ? AppColors.success : AppColors.error,
-              fontSize: 16,
+              fontSize: 15,
               fontWeight: FontWeight.bold,
             ),
           ),

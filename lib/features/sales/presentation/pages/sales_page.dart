@@ -1,4 +1,4 @@
-import 'package:chefcontrol/core/utils/toast_utils.dart';
+﻿import 'package:chefcontrol/core/utils/toast_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:excel/excel.dart' hide Border;
@@ -136,13 +136,21 @@ class _SalesPageState extends State<SalesPage> {
         // Date Range Picker
         InkWell(
           onTap: _selectDateRange,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(14),
           child: Container(
             margin: const EdgeInsets.only(bottom: 16),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             decoration: BoxDecoration(
               color: AppColors.surface,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.18),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -159,20 +167,27 @@ class _SalesPageState extends State<SalesPage> {
           ),
         ),
         
-        // Main Revenue Card
+        // Main Revenue Card matching Screen #8
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: AppColors.surface,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.white10),
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.22),
+                blurRadius: 8,
+                offset: const Offset(0, 3),
+              ),
+            ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'sales.revenue'.tr(),
-                style: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
+                style: const TextStyle(color: AppColors.textSecondary, fontSize: 13, fontWeight: FontWeight.w500),
               ),
               const SizedBox(height: 8),
               Row(
@@ -183,8 +198,9 @@ class _SalesPageState extends State<SalesPage> {
                       NumberFormat.currency(locale: 'ru', symbol: 'common.currency_sum'.tr(), decimalDigits: 0).format(summary.totalRevenue),
                       style: const TextStyle(
                         color: AppColors.textPrimary,
-                        fontSize: 22,
+                        fontSize: 24,
                         fontWeight: FontWeight.bold,
+                        letterSpacing: -0.3,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -194,15 +210,20 @@ class _SalesPageState extends State<SalesPage> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: (isPositive ? AppColors.success : AppColors.error).withValues(alpha: 0.1),
+                      color: (isPositive ? AppColors.success : AppColors.error).withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: (isPositive ? AppColors.success : AppColors.error).withValues(alpha: 0.35),
+                        width: 0.8,
+                      ),
                     ),
                     child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(isPositive ? Icons.arrow_upward : Icons.arrow_downward, 
+                        Icon(isPositive ? Icons.arrow_upward_rounded : Icons.arrow_downward_rounded, 
                              color: isPositive ? AppColors.success : AppColors.error, 
-                             size: 14),
-                        const SizedBox(width: 4),
+                             size: 13),
+                        const SizedBox(width: 3),
                         Text('$sign${summary.percentageChange.toStringAsFixed(1)}%', 
                              style: TextStyle(color: isPositive ? AppColors.success : AppColors.error, 
                                               fontWeight: FontWeight.bold, 
@@ -214,7 +235,7 @@ class _SalesPageState extends State<SalesPage> {
               ),
               const SizedBox(height: 16),
               const Divider(color: Colors.white10),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
               Row(
                 children: [
                   Expanded(
@@ -228,7 +249,7 @@ class _SalesPageState extends State<SalesPage> {
                     ),
                   ),
                   Container(width: 1, height: 30, color: Colors.white10),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 14),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -250,19 +271,32 @@ class _SalesPageState extends State<SalesPage> {
           ),
         ),
         
-        const SizedBox(height: 24),
+        const SizedBox(height: 20),
 
-        // Chart Placeholder (matches Screen 8)
+        // Gradient Bar Chart matching Screen #8
         Container(
-          height: 180,
+          height: 190,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: AppColors.surface,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.white10),
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.2),
+                blurRadius: 8,
+                offset: const Offset(0, 3),
+              ),
+            ],
           ),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(
+                'sales.revenue_by_time'.tr().isEmpty ? 'Выручка по дням' : 'sales.revenue_by_time'.tr(),
+                style: const TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 14),
               Expanded(
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -276,14 +310,21 @@ class _SalesPageState extends State<SalesPage> {
                               : 0.0;
                           final double maxRev = summary.dailyRevenues.fold(0.0, (m, v) => v > m ? v : m);
                           final double height = maxRev > 0
-                              ? ((amount / maxRev) * 100).clamp(6.0, 110.0)
+                              ? ((amount / maxRev) * 95).clamp(8.0, 95.0)
                               : 10.0;
                           return Container(
                             width: 24,
                             height: height,
                             decoration: BoxDecoration(
-                              color: amount > 0 ? Colors.blueAccent : Colors.white24,
-                              borderRadius: BorderRadius.circular(4),
+                              gradient: amount > 0 
+                                  ? const LinearGradient(
+                                      colors: [Color(0xFF246BFD), Color(0xFF00C6FF)],
+                                      begin: Alignment.bottomCenter,
+                                      end: Alignment.topCenter,
+                                    )
+                                  : null,
+                              color: amount > 0 ? null : Colors.white.withValues(alpha: 0.08),
+                              borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
                             ),
                           );
                         },
@@ -291,17 +332,17 @@ class _SalesPageState extends State<SalesPage> {
                   ],
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Text('sales.day_mon'.tr(), style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
-                  Text('sales.day_tue'.tr(), style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
-                  Text('sales.day_wed'.tr(), style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
-                  Text('sales.day_thu'.tr(), style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
-                  Text('sales.day_fri'.tr(), style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
-                  Text('sales.day_sat'.tr(), style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
-                  Text('sales.day_sun'.tr(), style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                  Text('sales.day_mon'.tr(), style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                  Text('sales.day_tue'.tr(), style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                  Text('sales.day_wed'.tr(), style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                  Text('sales.day_thu'.tr(), style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                  Text('sales.day_fri'.tr(), style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                  Text('sales.day_sat'.tr(), style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                  Text('sales.day_sun'.tr(), style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
                 ],
               ),
             ],
@@ -323,15 +364,18 @@ class _SalesPageState extends State<SalesPage> {
         ...summary.topDishes.map((d) => _buildTopDish(d.name, d.portions, d.sum)),
 
         const SizedBox(height: 24),
-        OutlinedButton.icon(
-          onPressed: () => _exportToExcel(summary),
-          icon: const Icon(Icons.download),
-          label: Text('sales.download_report'.tr()),
-          style: OutlinedButton.styleFrom(
-            padding: const EdgeInsets.all(16),
-            side: const BorderSide(color: Colors.white24),
-            foregroundColor: AppColors.textPrimary,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton.icon(
+            onPressed: () => _exportToExcel(summary),
+            icon: const Icon(Icons.download_rounded, size: 20),
+            label: Text('sales.download_report'.tr(), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+            style: OutlinedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              side: BorderSide(color: Colors.white.withValues(alpha: 0.15)),
+              foregroundColor: AppColors.textPrimary,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+            ),
           ),
         )
       ],
@@ -342,30 +386,55 @@ class _SalesPageState extends State<SalesPage> {
 
   Widget _buildTopDish(String name, int portions, double sum) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white10),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.07)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.15),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: AppColors.catSales.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: AppColors.catSales.withValues(alpha: 0.3)),
+            ),
+            child: const Icon(Icons.restaurant_rounded, color: AppColors.catSales, size: 20),
+          ),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(name, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold)),
+                Text(
+                  name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 15),
+                ),
                 const SizedBox(height: 4),
-                Text('$portions ${'sales.portions'.tr()}', style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                Text(
+                  '$portions ${'sales.portions'.tr()}',
+                  style: const TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.w500),
+                ),
               ],
             ),
           ),
           const SizedBox(width: 12),
           Text(
             '${sum.toInt()} ${'common.currency_sum'.tr()}',
-            style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold),
+            style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 14),
           ),
         ],
       ),

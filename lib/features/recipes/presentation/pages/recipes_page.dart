@@ -17,15 +17,29 @@ class RecipesPage extends StatefulWidget {
 class _RecipesPageState extends State<RecipesPage> {
   int _selectedCategoryIndex = 0;
   final ScrollController _scrollController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
   String? _highlightedRecipeId;
 
   @override
   void initState() {
     super.initState();
+    _searchController.addListener(() {
+      setState(() {
+        _searchQuery = _searchController.text.trim().toLowerCase();
+      });
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = context.read<RecipesProvider>();
       provider.fetchRecipes(background: provider.recipes.isNotEmpty);
     });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _scrollController.dispose();
+    super.dispose();
   }
   
   void _scrollToItem(String recipeId) {
@@ -119,15 +133,64 @@ class _RecipesPageState extends State<RecipesPage> {
 
           final selectedCategory = categories[selectedIndex];
 
-          final filteredRecipes = selectedCategory == allCategory
-              ? recipes
-              : recipes.where((r) => r.category == selectedCategory).toList();
+          final filteredRecipes = recipes.where((r) {
+            final matchesCategory = selectedCategory == allCategory || r.category == selectedCategory;
+            final matchesSearch = _searchQuery.isEmpty || 
+                r.name.toLowerCase().contains(_searchQuery) || 
+                r.category.toLowerCase().contains(_searchQuery);
+            return matchesCategory && matchesSearch;
+          }).toList();
 
           return Column(
             children: [
-              // Categories
+              // Inline Modern Search Bar matching Screen #3
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
+                child: Container(
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.2),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.search_rounded, color: AppColors.textSecondary, size: 20),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: TextField(
+                          controller: _searchController,
+                          style: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
+                          decoration: InputDecoration(
+                            hintText: 'recipes.search_hint'.tr().isEmpty ? 'Поиск блюд...' : 'recipes.search_hint'.tr(),
+                            hintStyle: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
+                            border: InputBorder.none,
+                            isDense: true,
+                            contentPadding: EdgeInsets.zero,
+                          ),
+                        ),
+                      ),
+                      if (_searchQuery.isNotEmpty)
+                        GestureDetector(
+                          onTap: () => _searchController.clear(),
+                          child: const Icon(Icons.close_rounded, color: AppColors.textSecondary, size: 18),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // Categories Filter Pills
               SizedBox(
-                height: 48,
+                height: 42,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -135,7 +198,7 @@ class _RecipesPageState extends State<RecipesPage> {
                   itemBuilder: (context, index) {
                     final isSelected = selectedIndex == index;
                     return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
                       child: InkWell(
                         onTap: () {
                           setState(() {
@@ -147,15 +210,27 @@ class _RecipesPageState extends State<RecipesPage> {
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            color: isSelected ? Colors.blueAccent : AppColors.surface,
+                            color: isSelected ? AppColors.primary : AppColors.surface,
                             borderRadius: BorderRadius.circular(20),
-                            border: isSelected ? null : Border.all(color: Colors.white10),
+                            border: isSelected
+                                ? null
+                                : Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                            boxShadow: isSelected
+                                ? [
+                                    BoxShadow(
+                                      color: AppColors.primary.withValues(alpha: 0.35),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 2),
+                                    )
+                                  ]
+                                : null,
                           ),
                           child: Text(
                             categories[index],
                             style: TextStyle(
                               color: isSelected ? Colors.white : AppColors.textSecondary,
-                              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                              fontSize: 13,
                             ),
                           ),
                         ),
@@ -165,15 +240,27 @@ class _RecipesPageState extends State<RecipesPage> {
                 ),
               ),
               
-              const SizedBox(height: 8),
+              const SizedBox(height: 10),
 
               // Recipes List
               Expanded(
                 child: filteredRecipes.isEmpty
-                    ? Center(child: Text('recipes.no_recipes'.tr(), style: const TextStyle(color: AppColors.textSecondary)))
+                    ? Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.restaurant_menu_rounded, size: 48, color: AppColors.textSecondary.withValues(alpha: 0.5)),
+                            const SizedBox(height: 12),
+                            Text(
+                              'recipes.no_recipes'.tr(),
+                              style: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
+                            ),
+                          ],
+                        ),
+                      )
                     : ListView.builder(
                         controller: _scrollController,
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                         itemCount: filteredRecipes.length,
                         itemBuilder: (context, index) {
                           final recipe = filteredRecipes[index];
@@ -186,41 +273,48 @@ class _RecipesPageState extends State<RecipesPage> {
                               );
                             },
                             child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 500),
+                              duration: const Duration(milliseconds: 300),
                               margin: const EdgeInsets.only(bottom: 12),
                               padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
-                                color: isHighlighted ? Colors.blueAccent.withValues(alpha: 0.2) : AppColors.surface,
+                                color: isHighlighted
+                                    ? AppColors.primary.withValues(alpha: 0.18)
+                                    : AppColors.surface,
                                 borderRadius: BorderRadius.circular(16),
-                                border: Border.all(color: isHighlighted ? Colors.blueAccent : Colors.white10),
+                                border: Border.all(
+                                  color: isHighlighted
+                                      ? AppColors.primary
+                                      : Colors.white.withValues(alpha: 0.07),
+                                  width: 1,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.22),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
                               ),
                               child: Row(
                                 children: [
-                                  // Image or Icon
-                                  Container(
-                                    width: 70,
-                                    height: 70,
-                                    decoration: BoxDecoration(
+                                  // Rounded Image Thumbnail matching Screen #3
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(14),
+                                    child: Container(
+                                      width: 64,
+                                      height: 64,
                                       color: AppColors.surfaceLight,
-                                      borderRadius: BorderRadius.circular(12),
-                                      image: recipe.imageUrl != null && recipe.imageUrl!.isNotEmpty
-                                          ? DecorationImage(
-                                              image: NetworkImage(recipe.imageUrl!),
+                                      child: recipe.imageUrl != null && recipe.imageUrl!.isNotEmpty
+                                          ? Image.network(
+                                              recipe.imageUrl!,
                                               fit: BoxFit.cover,
+                                              errorBuilder: (_, _, _) => _buildFallbackFoodIcon(recipe),
                                             )
-                                          : null,
+                                          : _buildFallbackFoodIcon(recipe),
                                     ),
-                                    child: recipe.imageUrl == null || recipe.imageUrl!.isEmpty
-                                        ? Center(
-                                            child: Text(
-                                              recipe.name.isNotEmpty ? recipe.name[0].toUpperCase() : '?',
-                                              style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
-                                            ),
-                                          )
-                                        : null,
                                   ),
-                                  const SizedBox(width: 16),
-                                  // Details
+                                  const SizedBox(width: 14),
+                                  // Recipe Details
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -230,36 +324,53 @@ class _RecipesPageState extends State<RecipesPage> {
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: const TextStyle(
-                                            fontSize: 16,
+                                            fontSize: 15,
                                             fontWeight: FontWeight.bold,
                                             color: AppColors.textPrimary,
+                                            letterSpacing: -0.2,
                                           ),
                                         ),
-                                        const SizedBox(height: 8),
+                                        const SizedBox(height: 6),
                                         Row(
                                           children: [
-                                            const Icon(Icons.pie_chart, size: 14, color: AppColors.success),
-                                            const SizedBox(width: 4),
-                                            Text(
-                                              'Foodcost: ${recipe.foodcostPercentage.toStringAsFixed(1)}%',
-                                              style: const TextStyle(
-                                                color: AppColors.success,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w500,
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                              decoration: BoxDecoration(
+                                                color: AppColors.success.withValues(alpha: 0.15),
+                                                borderRadius: BorderRadius.circular(6),
+                                                border: Border.all(
+                                                  color: AppColors.success.withValues(alpha: 0.3),
+                                                  width: 0.8,
+                                                ),
+                                              ),
+                                              child: Text(
+                                                '${'recipes.foodcost'.tr()}: ${recipe.foodcostPercentage.toStringAsFixed(0)}%',
+                                                style: const TextStyle(
+                                                  color: AppColors.success,
+                                                  fontSize: 11,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
                                             ),
                                             const Spacer(),
                                             Text(
-                                              '${recipe.outputQuantity} ${recipe.outputUnit}',
+                                              '${recipe.outputQuantity.toInt()} ${recipe.outputUnit}',
                                               style: const TextStyle(
                                                 color: AppColors.textSecondary,
-                                                fontSize: 12,
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w500,
                                               ),
                                             ),
                                           ],
                                         ),
                                       ],
                                     ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  const Icon(
+                                    Icons.arrow_forward_ios_rounded,
+                                    size: 13,
+                                    color: AppColors.textMuted,
                                   ),
                                 ],
                               ),
@@ -272,11 +383,55 @@ class _RecipesPageState extends State<RecipesPage> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _showAddRecipeModal,
-        backgroundColor: Colors.blueAccent,
-        shape: const CircleBorder(),
-        child: const Icon(Icons.add, color: Colors.white),
+      floatingActionButton: Container(
+        width: 54,
+        height: 54,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: AppColors.primaryGradient,
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primary.withValues(alpha: 0.4),
+              blurRadius: 14,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            customBorder: const CircleBorder(),
+            onTap: _showAddRecipeModal,
+            child: const Center(
+              child: Icon(Icons.add_rounded, color: Colors.white, size: 28),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFallbackFoodIcon(RecipeEntity recipe) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            AppColors.catTtk.withValues(alpha: 0.3),
+            AppColors.surfaceLight,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: Center(
+        child: Text(
+          recipe.name.isNotEmpty ? recipe.name[0].toUpperCase() : '?',
+          style: const TextStyle(
+            color: AppColors.catTtk,
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
     );
   }

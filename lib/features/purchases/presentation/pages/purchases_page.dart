@@ -370,24 +370,34 @@ class _PurchasesPageState extends State<PurchasesPage> with SingleTickerProvider
       ),
       body: Column(
         children: [
-          // Segmented Control
+          // Segmented Pill TabBar matching Screen #6
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child: Container(
-              height: 40,
+              height: 42,
               decoration: BoxDecoration(
                 color: AppColors.surface,
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
               ),
+              padding: const EdgeInsets.all(3),
               child: TabBar(
                 controller: _tabController,
                 indicator: BoxDecoration(
-                  color: Colors.blueAccent,
-                  borderRadius: BorderRadius.circular(8),
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withValues(alpha: 0.35),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
                 indicatorSize: TabBarIndicatorSize.tab,
                 labelColor: Colors.white,
                 unselectedLabelColor: AppColors.textSecondary,
+                labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                 dividerColor: Colors.transparent,
                 tabs: [
                   Tab(text: 'purchases.tab_requests'.tr()),
@@ -411,19 +421,30 @@ class _PurchasesPageState extends State<PurchasesPage> with SingleTickerProvider
         animation: _tabController.animation!,
         builder: (context, child) {
           final isInvoiceTab = _tabController.animation!.value.round() == 1;
-          return isInvoiceTab
-              ? FloatingActionButton.extended(
-                  onPressed: _scanInvoice,
-                  backgroundColor: Colors.blueAccent,
-                  icon: const Icon(Icons.document_scanner, color: Colors.white),
-                  label: Text('purchases.ai_scanner'.tr(), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                )
-              : FloatingActionButton.extended(
-                  onPressed: _createNewRequest,
-                  backgroundColor: AppColors.success,
-                  icon: const Icon(Icons.add, color: Colors.white),
-                  label: Text('purchases.new_request'.tr(), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                );
+          return Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(28),
+              gradient: isInvoiceTab ? AppColors.primaryGradient : AppColors.orangeGradient,
+              boxShadow: [
+                BoxShadow(
+                  color: (isInvoiceTab ? AppColors.primary : AppColors.secondary).withValues(alpha: 0.4),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: FloatingActionButton.extended(
+              elevation: 0,
+              highlightElevation: 0,
+              backgroundColor: Colors.transparent,
+              onPressed: isInvoiceTab ? _scanInvoice : _createNewRequest,
+              icon: Icon(isInvoiceTab ? Icons.document_scanner_rounded : Icons.add_rounded, color: Colors.white),
+              label: Text(
+                isInvoiceTab ? 'purchases.ai_scanner'.tr() : 'purchases.new_request'.tr(),
+                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+            ),
+          );
         },
       ),
     );
@@ -465,7 +486,7 @@ class _PurchasesPageState extends State<PurchasesPage> with SingleTickerProvider
         }
 
         return ListView.builder(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           itemCount: requestsList.length,
           itemBuilder: (context, index) {
             final order = requestsList[index];
@@ -479,57 +500,68 @@ class _PurchasesPageState extends State<PurchasesPage> with SingleTickerProvider
                 decoration: BoxDecoration(
                   color: AppColors.surface,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.white10),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.18),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
                 child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '#${order.id.substring(0, 8)} • ${order.date}',
-                    style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          order.supplierName,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '#${order.id.substring(0, order.id.length > 8 ? 8 : order.id.length).toUpperCase()} • ${order.date}',
+                          style: const TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.w500),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: Colors.orangeAccent.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(color: Colors.orangeAccent.withValues(alpha: 0.35)),
+                          ),
+                          child: Text(
+                            'purchases.status_expected'.tr(),
+                            style: const TextStyle(
+                              color: Colors.orangeAccent,
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            order.supplierName,
+                            style: const TextStyle(
+                              color: AppColors.textPrimary,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          NumberFormat.currency(locale: 'uz', symbol: 'purchases.currency'.tr(), decimalDigits: 0).format(order.totalAmount),
                           style: const TextStyle(
                             color: AppColors.textPrimary,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ),
-                      Text(
-                        '${order.totalAmount.toInt()} ${"purchases.currency".tr()}',
-                        style: const TextStyle(
-                          color: AppColors.success,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.orangeAccent.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(6),
+                      ],
                     ),
-                    child: Text(
-                      'purchases.status_expected'.tr(),
-                      style: const TextStyle(
-                        color: Colors.orangeAccent,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
               ),
             );
           },
@@ -574,7 +606,7 @@ class _PurchasesPageState extends State<PurchasesPage> with SingleTickerProvider
         }
 
         return ListView.builder(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           itemCount: invoicesList.length,
           itemBuilder: (context, index) {
             final order = invoicesList[index];
@@ -588,57 +620,68 @@ class _PurchasesPageState extends State<PurchasesPage> with SingleTickerProvider
                 decoration: BoxDecoration(
                   color: AppColors.surface,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.white10),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.18),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
                 child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '#${order.id.substring(0, 8)} • ${order.date}',
-                    style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          order.supplierName,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '#${order.id.substring(0, order.id.length > 8 ? 8 : order.id.length).toUpperCase()} • ${order.date}',
+                          style: const TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.w500),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: AppColors.success.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(color: AppColors.success.withValues(alpha: 0.35)),
+                          ),
+                          child: Text(
+                            'purchases.status_delivered'.tr(),
+                            style: const TextStyle(
+                              color: AppColors.success,
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            order.supplierName,
+                            style: const TextStyle(
+                              color: AppColors.textPrimary,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          NumberFormat.currency(locale: 'uz', symbol: 'purchases.currency'.tr(), decimalDigits: 0).format(order.totalAmount),
                           style: const TextStyle(
                             color: AppColors.textPrimary,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ),
-                      Text(
-                        '${order.totalAmount.toInt()} ${"purchases.currency".tr()}',
-                        style: const TextStyle(
-                          color: AppColors.success,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: AppColors.success.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(6),
+                      ],
                     ),
-                    child: Text(
-                      'purchases.status_delivered'.tr(),
-                      style: const TextStyle(
-                        color: AppColors.success,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
               ),
             );
           },

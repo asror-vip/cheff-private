@@ -81,29 +81,44 @@ class _MenuFoodcostPageState extends State<MenuFoodcostPage> {
       ),
       body: Column(
         children: [
-          // Dropdown Main Menu
+          // Dropdown Main Menu matching Screen #5
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
               decoration: BoxDecoration(
                 color: AppColors.surface,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.2),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
                   isExpanded: true,
                   dropdownColor: AppColors.surface,
                   value: categories.contains(_selectedCategory) ? _selectedCategory : categories.first,
-                  icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.textSecondary),
+                  icon: const Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.textSecondary),
                   items: categories.map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Row(
                         children: [
-                          const Icon(Icons.restaurant_menu, color: AppColors.textSecondary, size: 20),
-                          const SizedBox(width: 8),
-                          Text(value, style: const TextStyle(color: AppColors.textPrimary, fontSize: 14)),
+                          const Icon(Icons.restaurant_menu_rounded, color: AppColors.catMenu, size: 20),
+                          const SizedBox(width: 10),
+                          Text(
+                            value,
+                            style: const TextStyle(
+                              color: AppColors.textPrimary,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ],
                       ),
                     );
@@ -120,7 +135,7 @@ class _MenuFoodcostPageState extends State<MenuFoodcostPage> {
             ),
           ),
           
-          // Stats row
+          // Stats row matching Screen #5
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
@@ -130,13 +145,21 @@ class _MenuFoodcostPageState extends State<MenuFoodcostPage> {
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: AppColors.surface,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.18),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('menu.total_dishes'.tr(), style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 6),
                         Text('$totalDishesCount', style: const TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.bold)),
                       ],
                     ),
@@ -148,17 +171,25 @@ class _MenuFoodcostPageState extends State<MenuFoodcostPage> {
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: AppColors.surface,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.18),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('menu.avg_foodcost'.tr(), style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 6),
                         Text(
                           '${avgFoodcost.toStringAsFixed(1)}%',
                           style: TextStyle(
-                            color: avgFoodcost > 30 ? AppColors.error : AppColors.success,
+                            color: avgFoodcost > 30 ? AppColors.warning : AppColors.success,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
@@ -174,13 +205,21 @@ class _MenuFoodcostPageState extends State<MenuFoodcostPage> {
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: AppColors.surface,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.18),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('menu.expected_profit'.tr(), style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 6),
                         Text(
                           NumberFormat.currency(locale: 'uz', symbol: 'common.currency_sum'.tr(), decimalDigits: 0).format(expectedProfit),
                           style: const TextStyle(color: AppColors.textPrimary, fontSize: 13, fontWeight: FontWeight.bold),
@@ -194,7 +233,7 @@ class _MenuFoodcostPageState extends State<MenuFoodcostPage> {
             ),
           ),
 
-          // List of dishes
+          // List of dishes matching Screen #5
           Expanded(
             child: recipesProvider.isLoading && allRecipes.isEmpty
                 ? const Center(child: CircularProgressIndicator())
@@ -206,7 +245,7 @@ class _MenuFoodcostPageState extends State<MenuFoodcostPage> {
                         ),
                       )
                     : ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                         itemCount: filteredDishes.length,
                         itemBuilder: (context, index) {
                           final dish = filteredDishes[index];
@@ -227,28 +266,35 @@ class _MenuFoodcostPageState extends State<MenuFoodcostPage> {
                             },
                             borderRadius: BorderRadius.circular(16),
                             child: Container(
-                              margin: const EdgeInsets.only(bottom: 12),
+                              margin: const EdgeInsets.only(bottom: 10),
                               padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
                                 color: AppColors.surface,
                                 borderRadius: BorderRadius.circular(16),
-                                border: Border.all(color: Colors.white10),
+                                border: Border.all(color: Colors.white.withValues(alpha: 0.07)),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.18),
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
                               ),
                               child: Row(
                                 children: [
                                   ClipRRect(
-                                    borderRadius: BorderRadius.circular(8),
+                                    borderRadius: BorderRadius.circular(12),
                                     child: (dish.imageUrl != null && dish.imageUrl!.isNotEmpty)
                                         ? Image.network(
                                             dish.imageUrl!,
-                                            width: 50,
-                                            height: 50,
+                                            width: 56,
+                                            height: 56,
                                             fit: BoxFit.cover,
                                             errorBuilder: (context, error, stackTrace) => _buildLetterAvatar(dish.name),
                                           )
                                         : _buildLetterAvatar(dish.name),
                                   ),
-                                  const SizedBox(width: 16),
+                                  const SizedBox(width: 14),
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -257,7 +303,7 @@ class _MenuFoodcostPageState extends State<MenuFoodcostPage> {
                                           dish.name,
                                           style: const TextStyle(
                                             color: AppColors.textPrimary,
-                                            fontWeight: FontWeight.w500,
+                                            fontWeight: FontWeight.bold,
                                             fontSize: 15,
                                           ),
                                         ),
@@ -266,11 +312,11 @@ class _MenuFoodcostPageState extends State<MenuFoodcostPage> {
                                           children: [
                                             Text(
                                               NumberFormat.currency(locale: 'uz', symbol: 'common.currency_sum'.tr(), decimalDigits: 0).format(dish.sellingPrice),
-                                              style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
+                                              style: const TextStyle(color: AppColors.textPrimary, fontSize: 13, fontWeight: FontWeight.w600),
                                             ),
-                                            const SizedBox(width: 8),
+                                            const SizedBox(width: 6),
                                             Text(
-                                              '(${dish.costPrice.toInt()} ${'common.currency_sum'.tr()})',
+                                              '(${dish.costPrice.toInt()})',
                                               style: TextStyle(color: AppColors.textSecondary.withValues(alpha: 0.6), fontSize: 11),
                                             ),
                                           ],
@@ -278,12 +324,23 @@ class _MenuFoodcostPageState extends State<MenuFoodcostPage> {
                                       ],
                                     ),
                                   ),
-                                  Text(
-                                    '${dish.foodcostPercentage.toStringAsFixed(1)}%',
-                                    style: TextStyle(
-                                      color: isHighFoodcost ? AppColors.error : AppColors.success,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: (isHighFoodcost ? AppColors.warning : AppColors.success).withValues(alpha: 0.15),
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(
+                                        color: (isHighFoodcost ? AppColors.warning : AppColors.success).withValues(alpha: 0.35),
+                                        width: 0.8,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      '${dish.foodcostPercentage.toStringAsFixed(0)}%',
+                                      style: TextStyle(
+                                        color: isHighFoodcost ? AppColors.warning : AppColors.success,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -298,12 +355,13 @@ class _MenuFoodcostPageState extends State<MenuFoodcostPage> {
             padding: const EdgeInsets.all(16),
             child: ElevatedButton.icon(
               onPressed: _showAddDishModal,
-              icon: const Icon(Icons.add, color: Colors.white),
-              label: Text('menu.add_to_menu'.tr(), style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+              icon: const Icon(Icons.add_rounded, color: Colors.white, size: 22),
+              label: Text('menu.add_to_menu'.tr(), style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
               style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 54),
-                backgroundColor: Colors.blueAccent,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                minimumSize: const Size(double.infinity, 50),
+                backgroundColor: AppColors.primary,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                elevation: 3,
               ),
             ),
           )
@@ -314,16 +372,23 @@ class _MenuFoodcostPageState extends State<MenuFoodcostPage> {
 
   Widget _buildLetterAvatar(String name) {
     return Container(
-      width: 50,
-      height: 50,
+      width: 56,
+      height: 56,
       decoration: BoxDecoration(
-        color: AppColors.surfaceLight,
-        borderRadius: BorderRadius.circular(8),
+        gradient: LinearGradient(
+          colors: [
+            AppColors.catMenu.withValues(alpha: 0.3),
+            AppColors.surfaceLight,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Center(
         child: Text(
           name.isNotEmpty ? name[0].toUpperCase() : '?',
-          style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+          style: const TextStyle(color: AppColors.catMenu, fontSize: 20, fontWeight: FontWeight.bold),
         ),
       ),
     );
